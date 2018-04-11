@@ -1,0 +1,53 @@
+{
+
+var google_ads = new Array();
+var google_ad;
+var google_radlinks = new Array();
+var google_radlink;
+var google_info = new Object();
+google_ad = new Object(); 
+google_ad.n = 1; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = "contextual"; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BGL_mwk5MT4yFC42knQSAwdXHDfLnqaQC5tq43w-SxILmGZDAWBABGAEgotPYFSgDOABQsJ217AdgnbnQgZAFoAGOhoP6A7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRIACAakCRqhIcpJPhT7IAqqXziKoAwHoAwXoA68C6APhAegDJPUDAAAABIgGAQ&amp;num=1&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_26m5iFBU8Fj5KNjZxgwGqg2ikRmA&amp;client=ca-pub-1281461823660189&amp;adurl=http://www.mexontec.com/product.asp%3Fsort_id%3D10%26hw_id%3D176"; 
+google_ad.visible_url = "www.mexontec.com"; 
+google_ad.line1 = "\x26#20840;\x26#20809;\x26#21475;\x26#20132;\x26#25442;\x26#26426;,\x26#24037;\x26#19994;\x26#20132;\x26#25442;\x26#26426;"; 
+google_ad.line2 = "16\x26#20809;\x26#21475;,24\x26#20809;\x26#21475;\x26#20809;\x26#32420;\x26#20132;\x26#25442;\x26#26426;,48\x26#20809;\x26#21475;\x26#20809;\x26#32420;"; 
+google_ad.line3 = "\x26#20197;\x26#22826;\x26#32593;\x26#24037;\x26#19994;\x26#20132;\x26#25442;\x26#26426;,\x26#20806;\x26#36234;\x26#36890;\x26#35759;,67756421"; 
+google_ad.regionname = ""; 
+google_ads[0] = google_ad; 
+google_ad = new Object(); 
+google_ad.n = 2; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = ""; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BgTgiwk5MT4yFC42knQSAwdXHDceTy9ACh-eriyOv5vT9CJCSFBACGAIgotPYFSgDOABQ-5qEigVgnbnQgZAFoAH9gNb8A7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRMACBKgDAegDBegDrwLoA-EB6AMk9QMAAAAEiAYB&amp;num=2&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_2iCMD9uZUzn7rQyscfWY7UYxSRJw&amp;client=ca-pub-1281461823660189&amp;adurl=https://www.google.com/appserve/fb/forms/cnawcoupon30/%3Futm_source%3Dpt_Computer_category::Computers%2520%26%2520Electronics%3ESoftware"; 
+google_ad.visible_url = "AdWords.google.com"; 
+google_ad.line1 = "\x26#20813;\x26#36153;\x26#22312;\x26#35895;\x26#27468;\x26#23637;\x26#31034;\x26#24744;\x26#30340;\x26#24191;\x26#21578;"; 
+google_ad.line2 = "\x26#26356;\x26#26377;\x26#26426;\x26#20250;\x26#33719;\x26#24471;\x26#39640;\x26#36798;1000\x26#20803;\x26#24191;\x26#21578;\x26#36153;\x26#36192;\x26#36865;"; 
+google_ad.line3 = "\x26#21482;\x26#38656;1\x26#20998;\x26#38047;\x26#27880;\x26#20876;\x26#65292;\x26#39532;\x26#19978;\x26#33719;\x26#24471;\x26#20248;\x26#24800;\x26#21048;\x26#65281;"; 
+google_ad.regionname = ""; 
+google_ads[1] = google_ad; 
+google_ad = new Object(); 
+google_ad.n = 3; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = ""; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BZb2Vwk5MT4yFC42knQSAwdXHDdzI8IYC3PbFiyTEzrTuGcDubRADGAMgotPYFSgDOABQ4p2XlQVgnbnQgZAFoAH0oovkA7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRKkCRqhIcpJPhT7AAgTIApSIrxioAwHoAwXoA68C6APhAegDJPUDAAAABIgGAQ&amp;num=3&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_1ozYbtdUklFsQx9X3oZV9lGxJgIA&amp;client=ca-pub-1281461823660189&amp;adurl=http://quanguo.800pai.com/index.php%3Fcategory_id%3D0%26malltype_id%3D8"; 
+google_ad.visible_url = "quanguo.800pai.com"; 
+google_ad.line1 = "\x26#25968;\x26#30721;\x26#23478;\x26#30005;\x26#22242;\x26#36141;\x26#23601;\x26#19978;\x26#20843;\x26#20336;\x26#25293;"; 
+google_ad.line2 = "\x26#27599;\x26#22825;\x26#22810;\x26#27454;\x26#25968;\x26#30721;\x26#23478;\x26#30005;\x26#22242;\x26#36141;\x26#20449;\x26#24687;,"; 
+google_ad.line3 = "\x26#26356;\x26#22810;\x26#30465;\x26#38065;,\x26#20415;\x26#25463;,\x26#24819;\x26#19981;\x26#21040;\x26#30340;\x26#20302;\x26#20215;\x26#22242;\x26#36141;"; 
+google_ad.regionname = ""; 
+google_ads[2] = google_ad; 
+google_info.feedback_url = "http://www.google.com/url?ct\x3dabg\x26q\x3dhttps://www.google.com/adsense/support/bin/request.py%3Fcontact%3Dabg_afc%26url%3Dhttp://www.hudong.com/wiki/%2525E4%2525B8%2525AD%2525E6%252596%2525AD%26hl%3Dzh-CN%26client%3Dca-pub-1281461823660189%26adU%3Dwww.mexontec.com%26adT%3D%25E5%2585%25A8%25E5%2585%2589%25E5%258F%25A3%25E4%25BA%25A4%25E6%258D%25A2%25E6%259C%25BA,%25E5%25B7%25A5%25E4%25B8%259A%25E4%25BA%25A4%25E6%258D%25A2%25E6%259C%25BA%26adU%3DAdWords.google.com%26adT%3D%25E5%2585%258D%25E8%25B4%25B9%25E5%259C%25A8%25E8%25B0%25B7%25E6%25AD%258C%25E5%25B1%2595%25E7%25A4%25BA%25E6%2582%25A8%25E7%259A%2584%25E5%25B9%25BF%25E5%2591%258A%26adU%3Dquanguo.800pai.com%26adT%3D%25E6%2595%25B0%25E7%25A0%2581%25E5%25AE%25B6%25E7%2594%25B5%25E5%259B%25A2%25E8%25B4%25AD%25E5%25B0%25B1%25E4%25B8%258A%25E5%2585%25AB%25E4%25BD%25B0%25E6%258B%258D%26gl%3DCN\x26usg\x3dAFQjCNFXBTOjvNgvbfjtwpTXVyMzLKkPhA";
+var google_attribution_text = "Google 提供的广告";
+var google_is_rtl = false;
+if (window.google_ad_request_done) {
+google_ad_request_done(google_ads);
+}
+if (window.google_radlink_request_done) {
+google_radlink_request_done(google_radlinks);
+}
+}

@@ -1,0 +1,2065 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>使用Dstat监控Linux系统资源 分享 - 性能调优 -  LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区! -  Powered by Discuz!</title>
+<link href="http://bbs.linuxtone.org/thread-2080-1-1.html" rel="canonical" />
+<meta name="keywords" content="使用Dstat监控Linux系统资源 分享" />
+<meta name="description" content=" 使用Dstat监控Linux系统资源 分享 ,LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!" />
+<meta name="generator" content="Discuz! X2" />
+<meta name="author" content="Discuz! Team and Comsenz UI Team" />
+<meta name="copyright" content="2001-2011 Comsenz Inc." />
+<meta name="MSSmartTagsPreventParsing" content="True" />
+<meta http-equiv="MSThemeCompatible" content="Yes" />
+<base href="http://bbs.linuxtone.org/" /><link rel="stylesheet" type="text/css" href="data/cache/style_1_common.css?q44" /><link rel="stylesheet" type="text/css" href="data/cache/style_1_forum_viewthread.css?q44" /><link rel="stylesheet" id="css_extstyle" type="text/css" href="./template/default/style/t3/style.css" /><script type="text/javascript">var STYLEID = '1', STATICURL = 'static/', IMGDIR = 'static/image/common', VERHASH = 'q44', charset = 'utf-8', discuz_uid = '0', cookiepre = 'ppRN_2132_', cookiedomain = '', cookiepath = '/', showusercard = '1', attackevasive = '0', disallowfloat = 'newthread|reply|viewwarning|tradeorder|debate', creditnotice = '1|积分|分', defaultstyle = './template/default/style/t3', REPORTURL = 'aHR0cDovL2Jicy5saW51eHRvbmUub3JnL3RocmVhZC0yMDgwLTEtMS5odG1s', SITEURL = 'http://bbs.linuxtone.org/', JSPATH = 'static/js/';</script>
+<script src="static/js/common.js?q44" type="text/javascript"></script><meta name="application-name" content="LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!" />
+<meta name="msapplication-tooltip" content="LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!" />
+<meta name="msapplication-task" content="name=首页;action-uri=http://bbs.linuxtone.org/portal.php;icon-uri=http://bbs.linuxtone.org/static/image/common/portal.ico" /><meta name="msapplication-task" content="name=社区;action-uri=http://bbs.linuxtone.org/forum.php;icon-uri=http://bbs.linuxtone.org/static/image/common/bbs.ico" />
+<meta name="msapplication-task" content="name=群组;action-uri=http://bbs.linuxtone.org/group.php;icon-uri=http://bbs.linuxtone.org/static/image/common/group.ico" /><meta name="msapplication-task" content="name=家园;action-uri=http://bbs.linuxtone.org/home.php;icon-uri=http://bbs.linuxtone.org/static/image/common/home.ico" /><link rel="archives" title="LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!" href="http://bbs.linuxtone.org/archiver/" />
+<script src="static/js/forum.js?q44" type="text/javascript"></script>
+</head>
+
+<body id="nv_forum" class="pg_viewthread" onkeydown="if(event.keyCode==27) return false;">
+<div id="append_parent"></div><div id="ajaxwaitid"></div>
+
+<div id="toptb" class="cl">
+<div class="wp">
+<div class="z"><a href="javascript:;"  onclick="setHomepage('http://bbs.linuxtone.org/');">设为首页</a><a href="http://bbs.linuxtone.org/"  onclick="addFavorite(this.href, 'LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!');return false;">收藏本站</a><script type="text/javascript">var _speedMark = new Date();</script></div>
+<div class="y">
+<a href="javascript:;" onclick="widthauto(this)">切换到宽版</a>
+</div>
+</div>
+</div>
+
+
+<div id="qmenu_menu" class="p_pop blk" style="display: none;">
+<div class="ptm pbw hm">
+请 <a href="javascript:;" class="xi2" onclick="lsSubmit()"><strong>登录</strong></a> 后使用快捷导航<br />没有帐号？<a href="member.php?mod=register" class="xi2 xw1">注册</a>
+</div>
+</div>
+<div id="hd">
+<div class="wp">
+<div class="hdc cl"><h2><a href="./" title="LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!"><img src="static/image/common/logo.png" alt="LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!" border="0" /></a></h2>
+
+<script src="static/js/logging.js?q44" type="text/javascript"></script>
+<form method="post" autocomplete="off" id="lsform" action="member.php?mod=logging&amp;action=login&amp;loginsubmit=yes&amp;infloat=yes&amp;lssubmit=yes" onsubmit="return lsSubmit()">
+<div class="fastlg cl">
+<span id="return_ls" style="display:none"></span>
+<div class="y pns">
+<table cellspacing="0" cellpadding="0">
+<tr>
+<td>
+<span class="ftid">
+<select name="fastloginfield" id="ls_fastloginfield" width="40" tabindex="900">
+<option value="username">用户名</option>
+<option value="uid">UID</option>
+<option value="email">Email</option>
+</select>
+</span>
+<script type="text/javascript">simulateSelect('ls_fastloginfield')</script>
+</td>
+<td><input type="text" name="username" id="ls_username" autocomplete="off" class="px vm" tabindex="901" /></td>
+<td class="fastlg_l"><label for="ls_cookietime"><input type="checkbox" name="cookietime" id="ls_cookietime" class="pc" value="2592000" tabindex="903" />自动登录</label></td>
+<td>&nbsp;<a href="javascript:;" onclick="showWindow('login', 'member.php?mod=logging&action=login&viewlostpw=1')">找回密码</a></td>
+</tr>
+<tr>
+<td><label for="ls_password" class="z psw_w">密码</label></td>
+<td><input type="password" name="password" id="ls_password" class="px vm" autocomplete="off" tabindex="902" /></td>
+<td class="fastlg_l"><button type="submit" class="pn vm" tabindex="904" style="width: 75px;"><em>登录</em></button></td>
+<td>&nbsp;<a href="member.php?mod=register" class="xi2 xw1">注册</a></td>
+</tr>
+</table>
+<input type="hidden" name="quickforward" value="yes" />
+<input type="hidden" name="handlekey" value="ls" />
+</div>
+
+<div class="fastlg_fm y" style="margin-right: 10px; padding-right: 10px">
+<p><a href="xwb.php?m=xwbAuth.login" rel="nofollow"><img src="xwb/images/bgimg/sina_login_btn.png" class="vm" alt="&#29992;&#26032;&#28010;&#24494;&#21338;&#36830;&#25509;" /></a></p>
+<p class="hm xg1" style="padding-top: 2px;">&#19968;&#27493;&#25630;&#23450;</p>
+</div>
+<script>
+try{
+(function(){
+var node = document.getElementById("lsform").firstChild;
+var i = 1;
+while(i < 3 && node.nodeType!=1){
+node=node.nextSibling;
+i++;
+}
+node.style.width = 'auto';
+})();
+}catch(e){}
+</script>
+
+<div class="fastlg_fm y" style="margin-right: 10px; padding-right: 10px">
+<p><a href="http://bbs.linuxtone.org/connect.php?mod=login&op=init&referer=forum.php%3Fmod%3Dviewthread%26tid%3D2080%26extra%3Dpage%253D1%26page%3D1&statfrom=login_simple"><img src="static/image/common/qq_login.gif" class="vm" alt="QQ登录" /></a></p>
+<p class="hm xg1" style="padding-top: 2px;">只需一步，快速开始</p>
+</div>
+</div>
+</form>
+</div>
+
+<div id="nv">
+<a href="javascript:;" id="qmenu" onmouseover="showMenu({'ctrlid':'qmenu','pos':'34!','ctrlclass':'a','duration':2});">快捷导航</a>
+<ul><li class="a" id="mn_forum" ><a href="forum.php" hidefocus="true" title="BBS"  >社区<span>BBS</span></a></li><li id="mn_home" ><a href="home.php" hidefocus="true" title="Space"  >家园<span>Space</span></a></li><li id="mn_N9282" ><a href="http://bbs.linuxtone.org/forum-47-1.html" hidefocus="true"   style="font-weight: bold;">招聘求职</a></li><li id="mn_N12a7" ><a href="misc.php?mod=ranklist" hidefocus="true" title="Ranklist"  >排行榜<span>Ranklist</span></a></li><li id="mn_N43d4" ><a href="http://bbs.linuxtone.org/home.php?mod=space&do=friend" hidefocus="true"  >好友</a></li><li id="mn_Nbf83" ><a href="http://docs.linuxtone.org/ebooks/" hidefocus="true" target="_blank"   style="font-weight: bold;">文档下载</a></li><li id="mn_group" ><a href="group.php" hidefocus="true" title="Group"  >群组<span>Group</span></a></li><li id="mn_N0d21" ><a href="http://bbs.linuxtone.org/s.php" hidefocus="true" target="_blank"   style="font-weight: bold;">搜索</a></li><li id="mn_Na279" ><a href="http://bbs.linuxtone.org/plugin.php?id=dsu_amupper:list" hidefocus="true"  >签到</a></li><li id="mn_N8123" ><a href="http://bbs.linuxtone.org/ltimg/redun.jpg" hidefocus="true" target="_blank"   style="color: blue">带宽赞助商</a></li></ul>
+</div>
+<ul class="p_pop h_pop" id="plugin_menu" style="display: none">  <li><a id="mn_plink_list" href="plugin.php?id=dsu_amupper:list">签到排行</a></li>
+ </ul>
+<div id="mu" class="cl">
+</div><div id="scbar" class="cl"><form id="scbar_form" method="get" autocomplete="off" onsubmit="searchFocus($('scbar_txt'))" action="http://search.discuz.qq.com/f/discuz" target="_blank">
+<input type="hidden" name="mod" id="scbar_mod" value="search" />
+<input type="hidden" name="formhash" value="3ec73b3a" />
+<input type="hidden" name="srchtype" value="title" />
+<input type="hidden" name="srhfid" value="31" id="dzsearchforumid" />
+<input type="hidden" name="srhlocality" value="forum::viewthread" />
+<input type="hidden" name="sId" value="3180704" />
+<input type="hidden" name="ts" value="1325063638" />
+<input type="hidden" name="cuId" value="0" />
+<input type="hidden" name="cuName" value="" />
+<input type="hidden" name="gId" value="7" />
+<input type="hidden" name="agId" value="0" />
+<input type="hidden" name="egIds" value="" />
+<input type="hidden" name="fmSign" value="" />
+<input type="hidden" name="ugSign7" value="" />
+<input type="hidden" name="sign" value="4b5b10441e0527c92e63ff844ec4a53b" />
+<input type="hidden" name="charset" value="utf-8" />
+<input type="hidden" name="source" value="discuz" />
+<input type="hidden" name="fId" value=""  id="cloudsearchforumId" />
+<input type="hidden" name="q" id="cloudsearchquery" value="" />
+<table cellspacing="0" cellpadding="0">
+<tr>
+<td class="scbar_icon_td"></td>
+<td class="scbar_txt_td"><input type="text" name="srchtxt" id="scbar_txt" value="请输入搜索内容" autocomplete="off" /></td>
+<td class="scbar_type_td"><a href="javascript:;" id="scbar_type" class="showmenu xg1 xs2" onclick="showMenu(this.id)" hidefocus="true">搜索</a></td>
+<td class="scbar_btn_td"><button type="submit" name="searchsubmit" id="scbar_btn" class="pn pnc" value="true"><strong class="xi2 xs2">搜索</strong></button></td>
+<td class="scbar_hot_td">
+<div id="scbar_hot">
+<strong class="xw1">热搜: </strong>
+
+<a href="http://search.discuz.qq.com/f/discuz?q=puppet&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">puppet</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=cacti&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">cacti</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=nagios&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">nagios</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=lvs&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">lvs</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=squid&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">squid</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=tomcat&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">tomcat</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=nginx&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">nginx</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=redmine&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">redmine</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=mongodb&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">mongodb</a>
+
+
+
+<a href="http://search.discuz.qq.com/f/discuz?q=bind&source=hotsearch&sId=3180704&ts=1325063638&cuId=0&cuName=&gId=7&agId=0&egIds=&fmSign=&ugSign7=&sign=4b5b10441e0527c92e63ff844ec4a53b&charset=utf-8" target="_blank" class="xi2">bind</a>
+
+</div>
+</td>
+</tr>
+</table>
+</form>
+</div>
+<ul id="scbar_type_menu" class="p_pop" style="display: none;"><li><a href="javascript:;" rel="curforum" class="curtype">本版</a></li><li><a href="javascript:;" rel="forum">帖子</a></li><li><a href="javascript:;" rel="user">用户</a></li></ul>
+<script type="text/javascript">
+initSearchmenu('scbar', 'http://search.discuz.qq.com/f/discuz');
+</script>
+</div>
+</div>
+
+
+<div id="wp" class="wp"><script type="text/javascript">var fid = parseInt('31'), tid = parseInt('2080');</script>
+
+<script src="static/js/forum_viewthread.js?q44" type="text/javascript"></script>
+<script type="text/javascript">zoomstatus = parseInt(1);var imagemaxwidth = '600';var aimgcount = new Array();</script>
+
+<style id="diy_style" type="text/css"></style>
+<!--[diy=diynavtop]--><div id="diynavtop" class="area"></div><!--[/diy]-->
+<div id="pt" class="bm cl">
+<div class="z">
+<a href="./" class="nvhm" title="首页">LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!</a> <em>&rsaquo;</em> <a href="forum.php">社区</a> <em>&rsaquo;</em> <a href="forum.php?gid=18">==开源集群架构专家==</a> <em>&rsaquo;</em> <a href="forum.php?mod=forumdisplay&fid=31&page=1">性能调优</a> <em>&rsaquo;</em> <a href="thread-2080-1-1.html">使用Dstat监控Linux系统资源 分享</a>
+</div>
+</div>
+
+<style id="diy_style" type="text/css"></style>
+<div class="wp">
+<!--[diy=diy1]--><div id="diy1" class="area"></div><!--[/diy]-->
+</div>
+
+<div id="ct" class="wp cl">
+<div id="pgt" class="pgs mbm cl ">
+<div class="pgt"><div class="pg"><strong>1</strong><a href="thread-2080-2-1.html">2</a><a href="thread-2080-2-1.html" class="nxt">下一页</a></div></div>
+<span class="y pgb"><a href="forum.php?mod=forumdisplay&fid=31&page=1">返回列表</a></span>
+<a id="newspecial" onmouseover="$('newspecial').id = 'newspecialtmp';this.id = 'newspecial';showMenu({'ctrlid':this.id})" onclick="showWindow('newthread', 'forum.php?mod=post&action=newthread&fid=31')" href="javascript:;" title="发新帖"><img src="static/image/common/pn_post.png" alt="发新帖" /></a></div>
+
+
+
+<div id="postlist" class="pl bm">
+<table cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls ptm pbm">
+<div class="hm">
+<span class="xg1">查看:</span> <span class="xi1">7954</span><span class="pipe">|</span><span class="xg1">回复:</span> <span class="xi1">15</span>
+</div>
+</td>
+<td class="plc ptm pbn">
+<div class="y">
+<a href="forum.php?mod=viewthread&amp;action=printable&amp;tid=2080" title="打印" target="_blank"><img src="static/image/common/print.png" alt="打印" class="vm" /></a>
+<a href="forum.php?mod=redirect&amp;goto=nextoldset&amp;tid=2080" title="上一主题"><img src="static/image/common/thread-prev.png" alt="上一主题" class="vm" /></a>
+<a href="forum.php?mod=redirect&amp;goto=nextnewset&amp;tid=2080" title="下一主题"><img src="static/image/common/thread-next.png" alt="下一主题" class="vm" /></a>
+</div>
+<h1 class="ts">
+<a href="forum.php?mod=forumdisplay&amp;fid=31&amp;filter=typeid&amp;typeid=65">[Sys Performance]</a>
+<a href="thread-2080-1-1.html" id="thread_subject">使用Dstat监控Linux系统资源 分享</a>
+<span class="xw0 xs1 xg1">
+&nbsp;<img src="static/image/common/hot_1.gif" alt="" title="1 级热门" />
+<a href="thread-2080-1-1.html" onclick="return copyThreadUrl(this)" title="您的朋友访问此链接后，您将获得相应的积分奖励">[复制链接]</a>
+</span>
+</h1>
+</td>
+</tr>
+</table>
+
+
+<table cellspacing="0" cellpadding="0" class="ad"><tr><td class="pls"></td><td class="plc"></td></tr></table><div id="post_4918"><table id="pid4918" summary="pid4918" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-1.html" target="_blank" class="xw1">NetSeek</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo4918" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo4918_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-1.html" target="_blank" class="xi2">NetSeek</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2008-5-19</dd><dt>最后登录</dt><dd>2011-12-16</dd><dt>在线时间</dt><dd>1751 小时</dd><dt>阅读权限</dt><dd>200</dd><dt>积分</dt><dd>11401</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">2517</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">1196</a></dd><dt>精华</dt><dd>24</dd><dt>UID</dt><dd>1</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=67888954&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="http://www.linuxtone.org" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=1&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<a href="http://weibo.com/1762622645" target="_blank"><img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" title="NetSeek 的新浪微博" /></a><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=NetSeek" id="a_showip_li_4918" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=NetSeek" id="a_repent_4918" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo4918')"><a href="space-uid-1.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/00/01_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=1" target="_blank">LT管理团队</a></em></p>
+<p class="xg1">社区首席勤杂工</p></div>
+<p><img src="static/image/common/star_level3.gif" alt="Rank: 9" /><img src="static/image/common/star_level3.gif" alt="Rank: 9" /><img src="static/image/common/star_level1.gif" alt="Rank: 9" /></p>
+<a href="http://weibo.com/1762622645" target="_blank" class="xwb-plugin-medal-sinawb"><img onmouseout="XWBcontrol.TipPanel.setHideTimer();" onmouseover="XWBcontrol.TipPanel.showLayer(this, '1762622645');" src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" /></a><dl class="pil cl"><dt><a href="plugin.php?id=dsu_amupper:list" target="_blank" class="xi2">签到</a></dt><dd>59</dd></dl><dl class="pil cl"><dt>注册时间</dt><dd>2008-5-19</dd><dt>最后登录</dt><dd>2011-12-16</dd><dt>在线时间</dt><dd>1751 小时</dd><dt>阅读权限</dt><dd>200</dd><dt>积分</dt><dd>11401</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">2517</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">1196</a></dd><dt>精华</dt><dd>24</dd><dt>UID</dt><dd>1</dd></dl><p class="md_ctrl">
+<a href="home.php?mod=medal"><img id="md_4918_1" src="static/image/common/medal1.gif" alt="LT总司令" title="" onmouseover="showMenu({'ctrlid':this.id, 'menuid':'md_1_menu', 'pos':'12!'});" />
+</a>
+</p>
+<ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-1.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=1&amp;handlekey=addfriendhk_1" id="a_friend_li_4918" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=1" id="a_poke_li_4918" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_1&amp;touid=1&amp;pmid=0&amp;daterange=2&amp;pid=4918&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<div id="fj" class="y">
+<label class="z">电梯直达</label>
+<input type="text" class="px p_fre z" size="2" onkeyup="$('fj_btn').href='forum.php?mod=redirect&ptid=2080&authorid=0&postno='+this.value" onkeydown="if(event.keyCode==13) {window.location=$('fj_btn').href;return false;}" title="跳转到指定楼层" />
+<a href="javascript:;" id="fj_btn" class="z" title="跳转到指定楼层"><img src="static/image/common/fj_btn.png" alt="跳转到指定楼层" class="vm" /></a>
+</div>
+<strong>
+<a href="thread-2080-1-1.html" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum4918" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>1</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon4918" src="static/image/common/online_admin.gif" />
+<em id="authorposton4918">发表于 2009-3-8 15:13:20</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=1" rel="nofollow">只看该作者</a>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;extra=page%3D1&amp;ordertype=1">倒序浏览</a>
+</div>
+</div>
+</div><div class="pct"><style type="text/css">.pcb{margin-right:0}</style><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_4918">
+官方网站：<a href="http://dag.wieers.com/rpm/packages/dstat/" target="_blank">http://dag.wieers.com/rpm/packages/dstat/</a> <br />
+<ul><li>Dstat的安装：</ul><ul><li><br />
+wget <a href="http://dag.wieers.com/rpm/packages/dstat/dstat-0.6.7-1.rh7.rf.noarch.rpm" target="_blank">http://dag.wieers.com/rpm/packag ... 1.rh7.rf.noarch.rpm</a><br />
+ rpm -ivh dstat-0.6.7-1.rh7.rf.noarch.rpm</ul><br />
+Dstat的使用：<br />
+安装完成后，执行 dstat 命令，默认情况它会收集-cpu-、-disk-、-net-、－paging-、-system-的数据，一秒钟收集一次。 <br />
+默认输入 dstat 等于输入了dstat -cdngy 1或dstat -a 1；<br />
+推荐使用 date &amp;&amp; dstat&nbsp;&nbsp;-tclmdny 60 一分钟监视一次（注意调节显示的宽度，或去掉-t选项）。<br />
+<br />
+<br />
+于<a href="http://wiki.rdev.kingsoft.net/moin/SysStat" target="_blank">SysStat</a>相比，Dstat拥有一个彩色的界面，在手动观察性能状况时，数据比较显眼容易观察； <br />
+而且Dstat支持即时刷新，譬如：输入 dstat 3，即每三秒收集一次，但最新的数据都会每秒刷新显示。 <br />
+和<a href="http://wiki.rdev.kingsoft.net/moin/SysStat" target="_blank">SysStat</a>相同的是，Dstat也可以收集指定的性能资源。譬如 dstat -c 即显示CPU的使用情况。 <br />
+<br />
+<br />
+Dstat options:<br />
+&nbsp;&nbsp;-c, --cpu&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;显示CPU情况<br />
+&nbsp; &nbsp;&nbsp;&nbsp;-C 0,3,total&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;include cpu0, cpu3 and total<br />
+&nbsp;&nbsp;-d, --disk&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 显示磁盘情况<br />
+&nbsp; &nbsp;&nbsp;&nbsp;-D total,hda&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;include hda and total<br />
+&nbsp;&nbsp;-g, --page&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; enable page stats<br />
+&nbsp;&nbsp;-i, --int&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;enable interrupt stats<br />
+&nbsp; &nbsp;&nbsp;&nbsp;-I 5,eth2&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;include int5 and interrupt used by eth2<br />
+&nbsp;&nbsp;-l, --load&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; enable load stats<br />
+&nbsp;&nbsp;-m, --mem&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;显示内存情况<br />
+&nbsp;&nbsp;-n, --net&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;显示网络情况<br />
+&nbsp; &nbsp;&nbsp;&nbsp;-N eth1,total&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 可以指定网络接口<br />
+&nbsp;&nbsp;-p, --proc&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; enable process stats<br />
+&nbsp;&nbsp;-s, --swap&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 显示swap情况<br />
+&nbsp; &nbsp;&nbsp;&nbsp;-S swap1,total&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;可以指定多个swap<br />
+&nbsp;&nbsp;-t, --time&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; enable time counter<br />
+&nbsp;&nbsp;-y, --sys&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;enable system stats<br />
+&nbsp;&nbsp;--ipc&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;报告IPC消息队列和信号量的使用情况 <br />
+&nbsp;&nbsp;--lock&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;enable lock stats<br />
+&nbsp;&nbsp;--raw&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;enable raw stats<br />
+&nbsp;&nbsp;--tcp&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;enable tcp stats<br />
+&nbsp;&nbsp;--udp&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;enable udp stats<br />
+&nbsp;&nbsp;--unix&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;enable unix stats<br />
+<br />
+&nbsp;&nbsp;-M stat1,stat2&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;enable external stats<br />
+&nbsp; &nbsp;&nbsp;&nbsp;--mods stat1,stat2<br />
+<br />
+&nbsp;&nbsp;-a, --all&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;使用-cdngy 缺省的就是这样显示<br />
+&nbsp;&nbsp;-f, --full&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 使用 -C, -D, -I, -N and -S 显示<br />
+&nbsp;&nbsp;-v, --vmstat&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;使用-pmgdsc -D 显示<br />
+<br />
+&nbsp;&nbsp;--integer&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;show integer values<br />
+&nbsp;&nbsp;--nocolor&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;disable colors (implies --noupdate)<br />
+&nbsp;&nbsp;--noheaders&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;只显示一次表头以后就不显示了,使用重定向写入文件时很有用<br />
+&nbsp;&nbsp;--noupdate&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; disable intermediate updates<br />
+&nbsp;&nbsp;--output file&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 写入到CVS文件中<br />
+<br />
+<br />
+上个运行结果：<br />
+# dstat<br />
+<font color="#01ff00">----total-cpu-usage---- -dsk/total- -net/total- ---paging-- ---system--</font><br />
+<font color="#01ff00">usr sys idl wai hiq siq|_read _writ|_recv _send|__in_ _out_|_int_ _csw_</font><br />
+ 13&nbsp;&nbsp;49&nbsp;&nbsp;29&nbsp; &nbsp;8&nbsp; &nbsp;1&nbsp; &nbsp;1| 424k&nbsp; &nbsp;23k|&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 |&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 | 275&nbsp; &nbsp;200<br />
+&nbsp;&nbsp;0&nbsp; &nbsp;1&nbsp;&nbsp;95&nbsp; &nbsp;3&nbsp; &nbsp;0&nbsp; &nbsp;1|8192B&nbsp; &nbsp; 0 | 297B&nbsp; &nbsp;70B|&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 | 241&nbsp; &nbsp; 33<br />
+&nbsp;&nbsp;0&nbsp; &nbsp;1&nbsp;&nbsp;99&nbsp; &nbsp;0&nbsp; &nbsp;0&nbsp; &nbsp;0|&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 |&nbsp;&nbsp;92B&nbsp; &nbsp; 0 |&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 | 243&nbsp; &nbsp; 14<br />
+&nbsp;&nbsp;0&nbsp; &nbsp;1&nbsp;&nbsp;99&nbsp; &nbsp;0&nbsp; &nbsp;0&nbsp; &nbsp;0|&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 | 395B&nbsp; &nbsp; 0 |&nbsp; &nbsp;0&nbsp; &nbsp;&nbsp;&nbsp;0 | 244&nbsp; &nbsp; 20<br />
+<br />
+很简单，一看就明白了，<br />
+<font color="Blue"><strong>要说明的是如果当usr和sys的数值大于80时说明cpu的负载过重</strong></font>，这个软件和vmstat很像,<br />
+<font color="Blue">不过和vmstat相比好像少了io部份的显示dstat只能显示磁盘的吞吐量而不是显示负载情况</font>，<br />
+dstat和几乎所有监控软件一样，只能对整个系统进行监控而不能对某一个进程或某一个程序进行深入分析。<br />
+<br />
+如果你知道如何设置，请通知我。<br />
+<br />
+我常使用的参数是<div class="blockcode"><div id="code_sYm"><ol><li>dstat -cdlmnpsy</ol></div><em onclick="copycode($('code_sYm'));">复制代码</em></div>在1024×768的屏幕上正好全部显示出来，最好是将上面的命令设置成别名<div class="blockcode"><div id="code_xOx"><ol><li>alias dstat='dstat -cdlmnpsy'</ol></div><em onclick="copycode($('code_xOx'));">复制代码</em></div></td></tr></table>
+<div class="locked">附件: <em>你需要<a href="member.php?mod=logging&amp;action=login" onclick="showWindow('login', this.href);return false;">登录</a>才可以下载或查看附件。没有帐号？<a href="member.php?mod=register" title="注册帐号">注册</a> 
+<a href="http://bbs.linuxtone.org/connect.php?mod=login&op=init&referer=forum.php%3Fmod%3Dviewthread%26tid%3D2080%26extra%3Dpage%253D1%26page%3D1&statfrom=login" target="_top" rel="nofollow"><img src="static/image/common/qq_login.gif" class="vm" /></a>
+<a href="xwb.php?m=xwbAuth.login" rel="nofollow" alt="&#19968;&#27493;&#25630;&#23450;"><img src="xwb/images/bgimg/sina_login_btn.png" onerror="this.onerror=null;this.src='static/image/common/none.gif'" class="vm" /></a></em></div>
+</div>
+<div id="comment_4918" class="cm">
+</div>
+<div id="post_rate_div_4918"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+<div id="p_btn" class="mtw mbm cl">
+<div class="tshare cl">
+<strong>分享到:</strong>
+
+
+<a href="javascript:void(0);" id="k_qqshare" onclick="window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?from=discuz&url='+encodeURIComponent(document.location.href));return false;" title="QQ空间"><i><img src="static/image/common/qzone.gif" alt="QQ空间" />QQ空间</i></a>
+<a href="javascript:void(0)" onclick="postToWb();" id="k_weiboshare" title="腾讯微博"><i><img src="static/image/common/weibo.png" alt="腾讯微博" />腾讯微博</i></a>
+<a href="javascript:void(0);" onclick="window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?from=discuz&to=pengyou&url='+encodeURIComponent(document.location.href));return false;" id="k_pengyoushare" title="腾讯朋友"><i><img src="static/image/common/pengyou.png" alt="腾讯朋友" />腾讯朋友</i></a>
+<script type="text/javascript">
+function postToWb(){
+var _t = encodeURI(document.title);
+var _url = encodeURIComponent(document.location);
+var _appkey = encodeURI("ce7fb946290e4109bdc9175108b6db3a");
+var _pic = "";
+var _site = '';
+var _u = 'http://v.t.qq.com/share/share.php?url='+_url+'&appkey='+_appkey+'&site='+_site+'&pic='+_pic+'&title='+_t+'&from=discuz';
+window.open( _u,'', 'width=700, height=680, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, location=yes, resizable=no, status=no' );
+}
+</script>
+
+</div>
+<a href="home.php?mod=spacecp&amp;ac=share&amp;type=thread&amp;id=2080" id="k_share" onclick="showWindow(this.id, this.href, 'get', 0);" onmouseover="this.title = $('sharenumber').innerHTML + ' 人分享'"><i><img src="static/image/common/oshr.png" alt="分享" />分享<span id="sharenumber">0</span></i></a>
+<a href="home.php?mod=spacecp&amp;ac=favorite&amp;type=thread&amp;id=2080" id="k_favorite" onclick="showWindow(this.id, this.href, 'get', 0);" onmouseover="this.title = $('favoritenumber').innerHTML + ' 人收藏'"><i><img src="static/image/common/fav.gif" alt="收藏" />收藏<span id="favoritenumber">5</span></i></a>
+<a id="recommend_add" href="forum.php?mod=misc&amp;action=recommend&amp;do=add&amp;tid=2080"  onclick="showWindow('login', this.href)" onmouseover="this.title = $('recommendv_add').innerHTML + ' 人'"><i><img src="static/image/common/rec_add.gif" alt="" /><span id="recommendv_add">0</span></i></a>
+<a id="recommend_subtract" href="forum.php?mod=misc&amp;action=recommend&amp;do=subtract&amp;tid=2080"  onclick="showWindow('login', this.href)" onmouseover="this.title = $('recommendv_subtract').innerHTML + ' 人'"><i><img src="static/image/common/rec_subtract.gif" alt="" /><span id="recommendv_subtract">0</span></i></a>
+
+<a href="javascript:void((function(s,d,e,r,l,p,t,z,c,o) {var f='http://service.weibo.com/share/share.php?appkey=3484493652',u=z||d.location,p=['&url=',e(u),'&title=',e(t||d.title),'&ralateUid=',o||'','&sourceUrl=',e(l),'&content=',c||'gb2312','&pic=',e(p||'')].join('');function a(){if(!window.open([f,p].join(''),'mb', ['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width- 440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');}; if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0);}else{a();}}) (screen,document,encodeURIComponent,'','','','使用Dstat监控Linux系统资源 分享','','utf-8', ''));" onclick="setTimeout('forstat()', 0);"><i><img src="xwb/images/bgimg/icon_logo.png" />转发到微博</i></a>
+         <img id="statimg" style="display:none;" />
+         <script type="text/javascript">
+            function forstat(){
+                var statimg = document.getElementById("statimg");
+                statimg.src = "http://beacon.x.weibo.com/a.gif?uid=&pjt=xwb4dx&dsz=2&ver=2.1.1&xt=fw&akey=3484493652&ip=123.112.101.205" + "&random=" + Math.round(Math.random()*1000000);
+            }
+            if(window.jQuery && jQuery.fn.lazyload){
+                jQuery(function(){
+                    document.getElementById("statimg").style.display = "none";
+                });
+            }
+         </script>
+</div>
+<div class="sign" style="max-height:100px;maxHeightIE:100px;"><a href="http://weibo.com/1762622645" target="_blank"><img border="0" src="http://service.t.sina.com.cn/widget/qmd/1762622645/2a5b1a59/10.png"/></a><font color="Blue">感谢大家对linuxtone的支持！</font></strong></div>
+<div class="a_pb"><script type="text/javascript"><!--
+google_ad_client = "pub-1468414772780004";
+/* 图片广告 */
+google_ad_slot = "7532284079";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div></td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId4918" type="hidden" value="1762622645" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_4918" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport4918', 'misc.php?mod=report&rtype=post&rid=4918&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_4918_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=bump&amp;idtype=tid&amp;id=2080" id="a_bump" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/bump.small.gif" />提升卡</a></li>
+<li><a href="home.php?mod=magic&amp;mid=stick&amp;idtype=tid&amp;id=2080" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/stick.small.gif" />置顶卡</a></li>
+<li><a href="home.php?mod=magic&amp;mid=close&amp;idtype=tid&amp;id=2080" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/close.small.gif" />沉默卡</a></li>
+<li><a href="home.php?mod=magic&amp;mid=open&amp;idtype=tid&amp;id=2080" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/open.small.gif" />喧嚣卡</a></li>
+<li><a href="home.php?mod=magic&amp;mid=highlight&amp;idtype=tid&amp;id=2080" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/highlight.small.gif" />变色卡</a></li>
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=4918:2080" id="a_namepost_4918" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_4918')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_4919"><table id="pid4919" summary="pid4919" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-1.html" target="_blank" class="xw1">NetSeek</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo4919" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo4919_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-1.html" target="_blank" class="xi2">NetSeek</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2008-5-19</dd><dt>最后登录</dt><dd>2011-12-16</dd><dt>在线时间</dt><dd>1751 小时</dd><dt>阅读权限</dt><dd>200</dd><dt>积分</dt><dd>11401</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">2517</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">1196</a></dd><dt>精华</dt><dd>24</dd><dt>UID</dt><dd>1</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=67888954&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="http://www.linuxtone.org" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=1&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<a href="http://weibo.com/1762622645" target="_blank"><img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" title="NetSeek 的新浪微博" /></a><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=NetSeek" id="a_showip_li_4919" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=NetSeek" id="a_repent_4919" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo4919')"><a href="space-uid-1.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/00/01_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=1" target="_blank">LT管理团队</a></em></p>
+<p class="xg1">社区首席勤杂工</p></div>
+<p><img src="static/image/common/star_level3.gif" alt="Rank: 9" /><img src="static/image/common/star_level3.gif" alt="Rank: 9" /><img src="static/image/common/star_level1.gif" alt="Rank: 9" /></p>
+<a href="http://weibo.com/1762622645" target="_blank" class="xwb-plugin-medal-sinawb"><img onmouseout="XWBcontrol.TipPanel.setHideTimer();" onmouseover="XWBcontrol.TipPanel.showLayer(this, '1762622645');" src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" /></a><dl class="pil cl"><dt>注册时间</dt><dd>2008-5-19</dd><dt>最后登录</dt><dd>2011-12-16</dd><dt>在线时间</dt><dd>1751 小时</dd><dt>阅读权限</dt><dd>200</dd><dt>积分</dt><dd>11401</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">2517</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=1&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">1196</a></dd><dt>精华</dt><dd>24</dd><dt>UID</dt><dd>1</dd></dl><p class="md_ctrl">
+<a href="home.php?mod=medal"><img id="md_4919_1" src="static/image/common/medal1.gif" alt="LT总司令" title="" onmouseover="showMenu({'ctrlid':this.id, 'menuid':'md_1_menu', 'pos':'12!'});" />
+</a>
+</p>
+<ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-1.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=1&amp;handlekey=addfriendhk_1" id="a_friend_li_4919" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=1" id="a_poke_li_4919" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_1&amp;touid=1&amp;pmid=0&amp;daterange=2&amp;pid=4919&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=4919" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum4919" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>2</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon4919" src="static/image/common/online_admin.gif" />
+<em id="authorposton4919">发表于 2009-3-8 15:29:20</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=1" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_4919">
+<strong>常用命令</strong><br />
+<font color="Blue">dstat -cndymlp -N total -D total 5 25</font>&nbsp;&nbsp;统计CPU,IO ,network,system load<br />
+<br />
+<font color="Blue">dstat -cdnsil -D hda -N eth1</font> 统计网卡1的信息<br />
+<br />
+<font color="Blue">dstat ?vmstat</font> 内存使用情况</td></tr></table>
+</div>
+<div id="comment_4919" class="cm">
+</div>
+<div id="post_rate_div_4919"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+<div class="sign" style="max-height:100px;maxHeightIE:100px;"><a href="http://weibo.com/1762622645" target="_blank"><img border="0" src="http://service.t.sina.com.cn/widget/qmd/1762622645/2a5b1a59/10.png"/></a><font color="Blue">感谢大家对linuxtone的支持！</font></strong></div>
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId4919" type="hidden" value="1762622645" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_4919" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport4919', 'misc.php?mod=report&rtype=post&rid=4919&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_4919_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=4919:2080" id="a_namepost_4919" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_4919')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_4920"><table id="pid4920" summary="pid4920" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-35.html" target="_blank" class="xw1">huzi1986</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo4920" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo4920_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-35.html" target="_blank" class="xi2">huzi1986</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2008-6-1</dd><dt>最后登录</dt><dd>2011-11-21</dd><dt>在线时间</dt><dd>149 小时</dd><dt>阅读权限</dt><dd>100</dd><dt>积分</dt><dd>1100</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=35&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">309</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=35&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">39</a></dd><dt>精华</dt><dd>5</dd><dt>UID</dt><dd>35</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=178645003&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="http://www.lovebsd.com" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=35&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=huzi1986" id="a_showip_li_4920" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=huzi1986" id="a_repent_4920" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo4920')"><a href="space-uid-35.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/00/35_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=3" target="_blank">LT技术团队</a></em></p>
+<p class="xg1">菜鸟</p></div>
+<p><img src="static/image/common/star_level3.gif" alt="Rank: 7" /><img src="static/image/common/star_level2.gif" alt="Rank: 7" /><img src="static/image/common/star_level1.gif" alt="Rank: 7" /></p>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2008-6-1</dd><dt>最后登录</dt><dd>2011-11-21</dd><dt>在线时间</dt><dd>149 小时</dd><dt>阅读权限</dt><dd>100</dd><dt>积分</dt><dd>1100</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=35&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">309</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=35&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">39</a></dd><dt>精华</dt><dd>5</dd><dt>UID</dt><dd>35</dd></dl><p class="md_ctrl">
+<a href="home.php?mod=medal"><img id="md_4920_9" src="static/image/common/medal9.gif" alt="LT同学" title="" onmouseover="showMenu({'ctrlid':this.id, 'menuid':'md_9_menu', 'pos':'12!'});" />
+</a>
+</p>
+<ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-35.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=35&amp;handlekey=addfriendhk_35" id="a_friend_li_4920" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=35" id="a_poke_li_4920" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_35&amp;touid=35&amp;pmid=0&amp;daterange=2&amp;pid=4920&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=4920" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum4920" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>3</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon4920" src="static/image/common/online_moderator.gif" />
+<em id="authorposton4920">发表于 2009-3-8 15:52:53</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=35" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_4920">
+<img src="static/image/smiley/grapeman/08.gif" smilieid="53" border="0" alt="" /><img src="static/image/smiley/grapeman/08.gif" smilieid="53" border="0" alt="" /></td></tr></table>
+</div>
+<div id="comment_4920" class="cm">
+</div>
+<div id="post_rate_div_4920"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId4920" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_4920" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport4920', 'misc.php?mod=report&rtype=post&rid=4920&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_4920_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=4920:2080" id="a_namepost_4920" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_4920')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_5624"><table id="pid5624" summary="pid5624" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-530.html" target="_blank" class="xw1">bettydreamit</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo5624" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo5624_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-530.html" target="_blank" class="xi2">bettydreamit</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2008-11-12</dd><dt>最后登录</dt><dd>2011-12-26</dd><dt>在线时间</dt><dd>231 小时</dd><dt>阅读权限</dt><dd>90</dd><dt>积分</dt><dd>5250</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=530&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">188</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=530&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>530</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=393441547&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="http://www.selfcai.com.cn" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=530&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=bettydreamit" id="a_showip_li_5624" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=bettydreamit" id="a_repent_5624" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo5624')"><a href="space-uid-530.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/05/30_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=15" target="_blank">论坛元老</a></em></p>
+</div>
+<p><img src="static/image/common/star_level3.gif" alt="Rank: 8" /><img src="static/image/common/star_level3.gif" alt="Rank: 8" /></p>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2008-11-12</dd><dt>最后登录</dt><dd>2011-12-26</dd><dt>在线时间</dt><dd>231 小时</dd><dt>阅读权限</dt><dd>90</dd><dt>积分</dt><dd>5250</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=530&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">188</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=530&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>530</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-530.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=530&amp;handlekey=addfriendhk_530" id="a_friend_li_5624" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=530" id="a_poke_li_5624" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_530&amp;touid=530&amp;pmid=0&amp;daterange=2&amp;pid=5624&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=5624" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum5624" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>4</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon5624" src="static/image/common/online_member.gif" />
+<em id="authorposton5624">发表于 2009-3-23 12:38:14</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=530" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_5624">
+不错，支持一下。感觉不错，试下</td></tr></table>
+</div>
+<div id="comment_5624" class="cm">
+</div>
+<div id="post_rate_div_5624"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId5624" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_5624" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport5624', 'misc.php?mod=report&rtype=post&rid=5624&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_5624_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=5624:2080" id="a_namepost_5624" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_5624')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_5700"><table id="pid5700" summary="pid5700" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-1691.html" target="_blank" class="xw1">SuperL</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo5700" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo5700_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-1691.html" target="_blank" class="xi2">SuperL</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2009-3-4</dd><dt>最后登录</dt><dd>2011-10-19</dd><dt>在线时间</dt><dd>10 小时</dd><dt>阅读权限</dt><dd>10</dd><dt>积分</dt><dd>10</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=1691&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">11</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=1691&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">1</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>1691</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=1691&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=SuperL" id="a_showip_li_5700" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=SuperL" id="a_repent_5700" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo5700')"><a href="space-uid-1691.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/16/91_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=10" target="_blank">新手上路</a></em></p>
+</div>
+<p id="g_up5700" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level1.gif" alt="Rank: 1" /></p>
+<div id="g_up5700_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">新手上路, 积分 10, 距离下一级还需 40 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2009-3-4</dd><dt>最后登录</dt><dd>2011-10-19</dd><dt>在线时间</dt><dd>10 小时</dd><dt>阅读权限</dt><dd>10</dd><dt>积分</dt><dd>10</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=1691&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">11</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=1691&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">1</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>1691</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-1691.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=1691&amp;handlekey=addfriendhk_1691" id="a_friend_li_5700" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=1691" id="a_poke_li_5700" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_1691&amp;touid=1691&amp;pmid=0&amp;daterange=2&amp;pid=5700&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=5700" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum5700" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>5</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon5700" src="static/image/common/online_member.gif" />
+<em id="authorposton5700">发表于 2009-3-24 22:53:06</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=1691" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_5700">
+<img src="static/image/smiley/default/lol.gif" smilieid="12" border="0" alt="" />&nbsp;&nbsp;这个真是太好用。。。 <br />
+<br />
+就喜欢这种带颜色</td></tr></table>
+</div>
+<div id="comment_5700" class="cm">
+</div>
+<div id="post_rate_div_5700"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId5700" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_5700" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport5700', 'misc.php?mod=report&rtype=post&rid=5700&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_5700_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=5700:2080" id="a_namepost_5700" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_5700')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_22281"><table id="pid22281" summary="pid22281" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-9817.html" target="_blank" class="xw1">eric_sxy</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo22281" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo22281_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-9817.html" target="_blank" class="xi2">eric_sxy</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2010-7-15</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>7 小时</dd><dt>阅读权限</dt><dd>30</dd><dt>积分</dt><dd>498</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">22</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>9817</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=9817&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=eric_sxy" id="a_showip_li_22281" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=eric_sxy" id="a_repent_22281" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo22281')"><a href="space-uid-9817.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/98/17_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=12" target="_blank">中级会员</a></em></p>
+</div>
+<p id="g_up22281" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level2.gif" alt="Rank: 3" /><img src="static/image/common/star_level1.gif" alt="Rank: 3" /></p>
+<div id="g_up22281_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">中级会员, 积分 498, 距离下一级还需 2 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2010-7-15</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>7 小时</dd><dt>阅读权限</dt><dd>30</dd><dt>积分</dt><dd>498</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">22</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>9817</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-9817.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=9817&amp;handlekey=addfriendhk_9817" id="a_friend_li_22281" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=9817" id="a_poke_li_22281" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_9817&amp;touid=9817&amp;pmid=0&amp;daterange=2&amp;pid=22281&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=22281" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum22281" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>6</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon22281" src="static/image/common/online_member.gif" />
+<em id="authorposton22281">发表于 2010-7-15 13:43:34</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=9817" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_22281">
+看看，并且学习一下</td></tr></table>
+</div>
+<div id="comment_22281" class="cm">
+</div>
+<div id="post_rate_div_22281"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId22281" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_22281" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport22281', 'misc.php?mod=report&rtype=post&rid=22281&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_22281_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=22281:2080" id="a_namepost_22281" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_22281')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_22282"><table id="pid22282" summary="pid22282" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-9817.html" target="_blank" class="xw1">eric_sxy</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo22282" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo22282_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-9817.html" target="_blank" class="xi2">eric_sxy</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2010-7-15</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>7 小时</dd><dt>阅读权限</dt><dd>30</dd><dt>积分</dt><dd>498</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">22</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>9817</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=9817&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=eric_sxy" id="a_showip_li_22282" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=eric_sxy" id="a_repent_22282" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo22282')"><a href="space-uid-9817.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/98/17_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=12" target="_blank">中级会员</a></em></p>
+</div>
+<p id="g_up22282" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level2.gif" alt="Rank: 3" /><img src="static/image/common/star_level1.gif" alt="Rank: 3" /></p>
+<div id="g_up22282_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">中级会员, 积分 498, 距离下一级还需 2 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2010-7-15</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>7 小时</dd><dt>阅读权限</dt><dd>30</dd><dt>积分</dt><dd>498</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">22</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=9817&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>9817</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-9817.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=9817&amp;handlekey=addfriendhk_9817" id="a_friend_li_22282" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=9817" id="a_poke_li_22282" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_9817&amp;touid=9817&amp;pmid=0&amp;daterange=2&amp;pid=22282&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=22282" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum22282" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>7</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon22282" src="static/image/common/online_member.gif" />
+<em id="authorposton22282">发表于 2010-7-15 13:44:28</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=9817" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_22282">
+看看，并且学习一下</td></tr></table>
+</div>
+<div id="comment_22282" class="cm">
+</div>
+<div id="post_rate_div_22282"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId22282" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_22282" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport22282', 'misc.php?mod=report&rtype=post&rid=22282&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_22282_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=22282:2080" id="a_namepost_22282" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_22282')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_30239"><table id="pid30239" summary="pid30239" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-10092.html" target="_blank" class="xw1">sunshine007</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo30239" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo30239_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-10092.html" target="_blank" class="xi2">sunshine007</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2010-8-12</dd><dt>最后登录</dt><dd>2011-7-25</dd><dt>在线时间</dt><dd>6 小时</dd><dt>阅读权限</dt><dd>20</dd><dt>积分</dt><dd>71</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=10092&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">20</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=10092&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">0</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>10092</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=10092&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=sunshine007" id="a_showip_li_30239" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=sunshine007" id="a_repent_30239" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo30239')"><a href="space-uid-10092.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/00/92_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=11" target="_blank">初级会员</a></em></p>
+</div>
+<p id="g_up30239" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level2.gif" alt="Rank: 2" /></p>
+<div id="g_up30239_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">初级会员, 积分 71, 距离下一级还需 129 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2010-8-12</dd><dt>最后登录</dt><dd>2011-7-25</dd><dt>在线时间</dt><dd>6 小时</dd><dt>阅读权限</dt><dd>20</dd><dt>积分</dt><dd>71</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=10092&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">20</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=10092&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">0</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>10092</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-10092.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=10092&amp;handlekey=addfriendhk_10092" id="a_friend_li_30239" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=10092" id="a_poke_li_30239" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_10092&amp;touid=10092&amp;pmid=0&amp;daterange=2&amp;pid=30239&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=30239" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum30239" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>8</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon30239" src="static/image/common/online_member.gif" />
+<em id="authorposton30239">发表于 2010-11-18 19:40:33</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=10092" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_30239">
+确实是一个好工具。</td></tr></table>
+</div>
+<div id="comment_30239" class="cm">
+</div>
+<div id="post_rate_div_30239"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId30239" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_30239" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport30239', 'misc.php?mod=report&rtype=post&rid=30239&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_30239_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=30239:2080" id="a_namepost_30239" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_30239')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_41532"><table id="pid41532" summary="pid41532" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-10350.html" target="_blank" class="xw1">alonewolf</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo41532" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo41532_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-10350.html" target="_blank" class="xi2">alonewolf</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2010-9-10</dd><dt>最后登录</dt><dd>2011-10-22</dd><dt>在线时间</dt><dd>29 小时</dd><dt>阅读权限</dt><dd>30</dd><dt>积分</dt><dd>451</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=10350&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">72</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=10350&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">2</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>10350</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=83309719&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="http://www.alonewolf.net" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=10350&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=alonewolf" id="a_showip_li_41532" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=alonewolf" id="a_repent_41532" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo41532')"><a href="space-uid-10350.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/03/50_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=12" target="_blank">中级会员</a></em></p>
+</div>
+<p id="g_up41532" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level2.gif" alt="Rank: 3" /><img src="static/image/common/star_level1.gif" alt="Rank: 3" /></p>
+<div id="g_up41532_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">中级会员, 积分 451, 距离下一级还需 49 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2010-9-10</dd><dt>最后登录</dt><dd>2011-10-22</dd><dt>在线时间</dt><dd>29 小时</dd><dt>阅读权限</dt><dd>30</dd><dt>积分</dt><dd>451</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=10350&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">72</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=10350&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">2</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>10350</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-10350.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=10350&amp;handlekey=addfriendhk_10350" id="a_friend_li_41532" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=10350" id="a_poke_li_41532" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_10350&amp;touid=10350&amp;pmid=0&amp;daterange=2&amp;pid=41532&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=41532" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum41532" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>9</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon41532" src="static/image/common/online_member.gif" />
+<em id="authorposton41532">发表于 2011-3-28 22:38:35</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=10350" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_41532">
+这个是用PYTHON写的？</td></tr></table>
+</div>
+<div id="comment_41532" class="cm">
+</div>
+<div id="post_rate_div_41532"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId41532" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_41532" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport41532', 'misc.php?mod=report&rtype=post&rid=41532&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_41532_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=41532:2080" id="a_namepost_41532" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_41532')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_41578"><table id="pid41578" summary="pid41578" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-31.html" target="_blank" class="xw1">守住每一天</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo41578" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo41578_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-31.html" target="_blank" class="xi2">守住每一天</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2008-5-30</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>615 小时</dd><dt>阅读权限</dt><dd>200</dd><dt>积分</dt><dd>8367</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=31&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">1243</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=31&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">173</a></dd><dt>精华</dt><dd>11</dd><dt>UID</dt><dd>31</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=48431359&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="http://liuyu.blog.51cto.com" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=31&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<a href="http://weibo.com/1054764633" target="_blank"><img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" title="守住每一天 的新浪微博" /></a><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=%E5%AE%88%E4%BD%8F%E6%AF%8F%E4%B8%80%E5%A4%A9" id="a_showip_li_41578" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=%E5%AE%88%E4%BD%8F%E6%AF%8F%E4%B8%80%E5%A4%A9" id="a_repent_41578" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo41578')"><a href="space-uid-31.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/00/00/31_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=1" target="_blank">LT管理团队</a></em></p>
+<p class="xg1">守住每一天</p></div>
+<p><img src="static/image/common/star_level3.gif" alt="Rank: 9" /><img src="static/image/common/star_level3.gif" alt="Rank: 9" /><img src="static/image/common/star_level1.gif" alt="Rank: 9" /></p>
+<a href="http://weibo.com/1054764633" target="_blank" class="xwb-plugin-medal-sinawb"><img onmouseout="XWBcontrol.TipPanel.setHideTimer();" onmouseover="XWBcontrol.TipPanel.showLayer(this, '1054764633');" src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" /></a><dl class="pil cl"><dt>注册时间</dt><dd>2008-5-30</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>615 小时</dd><dt>阅读权限</dt><dd>200</dd><dt>积分</dt><dd>8367</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=31&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">1243</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=31&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">173</a></dd><dt>精华</dt><dd>11</dd><dt>UID</dt><dd>31</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-31.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=31&amp;handlekey=addfriendhk_31" id="a_friend_li_41578" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=31" id="a_poke_li_41578" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_31&amp;touid=31&amp;pmid=0&amp;daterange=2&amp;pid=41578&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=41578" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum41578" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>10</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon41578" src="static/image/common/online_admin.gif" />
+<em id="authorposton41578">发表于 2011-3-29 10:13:17</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=31" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_41578">
+常用 ： date &amp;&amp; dstat -tclmdny 60</td></tr></table>
+</div>
+<div id="comment_41578" class="cm">
+</div>
+<div id="post_rate_div_41578"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+<div class="sign" style="max-height:100px;maxHeightIE:100px;">&lt;-sina_sign,1054764633,7-&gt;</div>
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId41578" type="hidden" value="1054764633" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_41578" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport41578', 'misc.php?mod=report&rtype=post&rid=41578&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_41578_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=41578:2080" id="a_namepost_41578" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_41578')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_51931"><table id="pid51931" summary="pid51931" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-12696.html" target="_blank" class="xw1">tianjing</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo51931" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo51931_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-12696.html" target="_blank" class="xi2">tianjing</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2011-4-6</dd><dt>最后登录</dt><dd>2011-12-22</dd><dt>在线时间</dt><dd>82 小时</dd><dt>阅读权限</dt><dd>70</dd><dt>积分</dt><dd>1202</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=12696&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">39</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=12696&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">7</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>12696</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=715381425&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="www.itianjing.com" target="_blank" title="查看个人网站"><img src="static/image/common/forumlink.gif" alt="查看个人网站" /></a><a href="home.php?mod=space&amp;uid=12696&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=tianjing" id="a_showip_li_51931" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=tianjing" id="a_repent_51931" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo51931')"><a href="space-uid-12696.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/26/96_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=14" target="_blank">金牌会员</a></em></p>
+</div>
+<p id="g_up51931" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level3.gif" alt="Rank: 6" /><img src="static/image/common/star_level2.gif" alt="Rank: 6" /></p>
+<div id="g_up51931_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">金牌会员, 积分 1202, 距离下一级还需 1798 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2011-4-6</dd><dt>最后登录</dt><dd>2011-12-22</dd><dt>在线时间</dt><dd>82 小时</dd><dt>阅读权限</dt><dd>70</dd><dt>积分</dt><dd>1202</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=12696&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">39</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=12696&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">7</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>12696</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-12696.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=12696&amp;handlekey=addfriendhk_12696" id="a_friend_li_51931" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=12696" id="a_poke_li_51931" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_12696&amp;touid=12696&amp;pmid=0&amp;daterange=2&amp;pid=51931&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=51931" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum51931" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>11</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon51931" src="static/image/common/online_member.gif" />
+<em id="authorposton51931">发表于 2011-6-16 10:33:24</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=12696" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_51931">
+<strong>回复 <a href="http://bbs.linuxtone.org/forum.php?mod=redirect&amp;goto=findpost&amp;pid=4918&amp;ptid=2080" target="_blank"><font color="Olive">NetSeek</font> 的帖子</a></strong><br />
+<br />
+<br />
+dstat -d -M topio -M topcpu -M topmem 可以看到单个进程的一些情况<br />
+<img src="http://bbs.linuxtone.org/data/attachment/album/201106/16/103050ganhgagpi96eniga.png" onload="thumbImg(this)" alt="" /><img src="http://bbs.linuxtone.org/data/attachment/album/201106/16/103050ganhgagpi96eniga.png" onload="thumbImg(this)" alt="" /><br />
+<br />
+<br />
+感觉挺有用的，<br />
+dstat -M list 可以把所有能用的选项列出来，<br /><div class="blockcode"><div id="code_2j9"><ol><li>[tianjing@tianjing-ops Thu Jun 16 10:27 AM ~]$dstat -M list<br /><li>/usr/share/dstat:<br /><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;battery, cpufreq, dbus, freespace, gpfs, gpfsop, helloworld, innodb_buffer, innodb_io, innodb_ops, mysql5_com, <br /><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mysql5_conn, mysql5_io, mysql5_keys, mysql_io, mysql_keys, nfs3, nfs3op, nfsd3, nfsd3op, postfix, rpc, rpcd, sendmail, <br /><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;thermal, topbio, topcpu, topio, topmem, topoom, utmp, vmkhba, vmkint, vmknic, vzcpu, vzubc, wifi,</ol></div><em onclick="copycode($('code_2j9'));">复制代码</em></div>其他的选项没怎么用过，不太清楚是什么意思<br />
+<br />
+<br />
+</td></tr></table>
+</div>
+<div id="comment_51931" class="cm">
+</div>
+<div id="post_rate_div_51931"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId51931" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_51931" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport51931', 'misc.php?mod=report&rtype=post&rid=51931&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_51931_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=51931:2080" id="a_namepost_51931" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_51931')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_61008"><table id="pid61008" summary="pid61008" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-11752.html" target="_blank" class="xw1">灰大狼</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo61008" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo61008_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-11752.html" target="_blank" class="xi2">灰大狼</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2011-1-14</dd><dt>最后登录</dt><dd>2011-12-26</dd><dt>在线时间</dt><dd>92 小时</dd><dt>阅读权限</dt><dd>70</dd><dt>积分</dt><dd>2303</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=11752&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">178</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=11752&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">21</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>11752</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=11752&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=%E7%81%B0%E5%A4%A7%E7%8B%BC" id="a_showip_li_61008" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=%E7%81%B0%E5%A4%A7%E7%8B%BC" id="a_repent_61008" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo61008')"><a href="space-uid-11752.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/17/52_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=14" target="_blank">金牌会员</a></em></p>
+</div>
+<p id="g_up61008" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level3.gif" alt="Rank: 6" /><img src="static/image/common/star_level2.gif" alt="Rank: 6" /></p>
+<div id="g_up61008_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">金牌会员, 积分 2303, 距离下一级还需 697 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2011-1-14</dd><dt>最后登录</dt><dd>2011-12-26</dd><dt>在线时间</dt><dd>92 小时</dd><dt>阅读权限</dt><dd>70</dd><dt>积分</dt><dd>2303</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=11752&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">178</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=11752&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">21</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>11752</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-11752.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=11752&amp;handlekey=addfriendhk_11752" id="a_friend_li_61008" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=11752" id="a_poke_li_61008" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_11752&amp;touid=11752&amp;pmid=0&amp;daterange=2&amp;pid=61008&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=61008" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum61008" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>12</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon61008" src="static/image/common/online_member.gif" />
+<em id="authorposton61008">发表于 2011-7-19 09:32:07</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=11752" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_61008">
+<strong>回复 <a href="http://bbs.linuxtone.org/forum.php?mod=redirect&amp;goto=findpost&amp;pid=51931&amp;ptid=2080" target="_blank"><font color="Olive">tianjing</font> 的帖子</a></strong><br />
+<br />
+说两点 ，<br />
+1.新的版本我用的0.7.2已经不支持-M方式，详细的查看帮助<br />
+2.只能查看占用最大的进程，不能查看每个进程<br />
+</td></tr></table>
+</div>
+<div id="comment_61008" class="cm">
+</div>
+<div id="post_rate_div_61008"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId61008" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_61008" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport61008', 'misc.php?mod=report&rtype=post&rid=61008&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_61008_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=61008:2080" id="a_namepost_61008" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_61008')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_61269"><table id="pid61269" summary="pid61269" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-11286.html" target="_blank" class="xw1">JassonBourne</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo61269" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo61269_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-11286.html" target="_blank" class="xi2">JassonBourne</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2010-11-29</dd><dt>最后登录</dt><dd>2011-12-25</dd><dt>在线时间</dt><dd>144 小时</dd><dt>阅读权限</dt><dd>90</dd><dt>积分</dt><dd>3399</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=11286&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">41</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=11286&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>11286</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=11286&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<a href="http://weibo.com/1267379472" target="_blank"><img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" title="JassonBourne 的新浪微博" /></a><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=JassonBourne" id="a_showip_li_61269" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=JassonBourne" id="a_repent_61269" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo61269')"><a href="space-uid-11286.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/12/86_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=15" target="_blank">论坛元老</a></em></p>
+</div>
+<p><img src="static/image/common/star_level3.gif" alt="Rank: 8" /><img src="static/image/common/star_level3.gif" alt="Rank: 8" /></p>
+<a href="http://weibo.com/1267379472" target="_blank" class="xwb-plugin-medal-sinawb"><img onmouseout="XWBcontrol.TipPanel.setHideTimer();" onmouseover="XWBcontrol.TipPanel.showLayer(this, '1267379472');" src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" /></a><dl class="pil cl"><dt>注册时间</dt><dd>2010-11-29</dd><dt>最后登录</dt><dd>2011-12-25</dd><dt>在线时间</dt><dd>144 小时</dd><dt>阅读权限</dt><dd>90</dd><dt>积分</dt><dd>3399</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=11286&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">41</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=11286&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">3</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>11286</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-11286.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=11286&amp;handlekey=addfriendhk_11286" id="a_friend_li_61269" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=11286" id="a_poke_li_61269" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_11286&amp;touid=11286&amp;pmid=0&amp;daterange=2&amp;pid=61269&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=61269" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum61269" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>13</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon61269" src="static/image/common/online_member.gif" />
+<em id="authorposton61269">发表于 2011-7-20 23:32:57</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=11286" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_61269">
+这个工具真不错...不过还真不怎么会分析哪些数据啊..!</td></tr></table>
+</div>
+<div id="comment_61269" class="cm">
+</div>
+<div id="post_rate_div_61269"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId61269" type="hidden" value="1267379472" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_61269" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport61269', 'misc.php?mod=report&rtype=post&rid=61269&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_61269_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=61269:2080" id="a_namepost_61269" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_61269')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_67028"><table id="pid67028" summary="pid67028" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-15410.html" target="_blank" class="xw1">btschina</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo67028" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo67028_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-15410.html" target="_blank" class="xi2">btschina</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2011-8-16</dd><dt>最后登录</dt><dd>2011-12-21</dd><dt>在线时间</dt><dd>8 小时</dd><dt>阅读权限</dt><dd>20</dd><dt>积分</dt><dd>104</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=15410&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">12</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=15410&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">0</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>15410</dd></dl>
+<div class="imicn">
+<a href="home.php?mod=space&amp;uid=15410&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<a href="http://weibo.com/1643017034" target="_blank"><img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" title="btschina 的新浪微博" /></a><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=btschina" id="a_showip_li_67028" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=btschina" id="a_repent_67028" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo67028')"><a href="space-uid-15410.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/54/10_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=11" target="_blank">初级会员</a></em></p>
+</div>
+<p id="g_up67028" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level2.gif" alt="Rank: 2" /></p>
+<div id="g_up67028_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">初级会员, 积分 104, 距离下一级还需 96 积分</div>
+</div>
+<a href="http://weibo.com/1643017034" target="_blank" class="xwb-plugin-medal-sinawb"><img onmouseout="XWBcontrol.TipPanel.setHideTimer();" onmouseover="XWBcontrol.TipPanel.showLayer(this, '1643017034');" src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_on.gif" /></a><dl class="pil cl"><dt>注册时间</dt><dd>2011-8-16</dd><dt>最后登录</dt><dd>2011-12-21</dd><dt>在线时间</dt><dd>8 小时</dd><dt>阅读权限</dt><dd>20</dd><dt>积分</dt><dd>104</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=15410&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">12</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=15410&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">0</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>15410</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-15410.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=15410&amp;handlekey=addfriendhk_15410" id="a_friend_li_67028" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=15410" id="a_poke_li_67028" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_15410&amp;touid=15410&amp;pmid=0&amp;daterange=2&amp;pid=67028&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=67028" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum67028" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>14</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon67028" src="static/image/common/online_member.gif" />
+<em id="authorposton67028">发表于 2011-9-2 13:06:36</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=15410" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_67028">
+牛 。很好啊。</td></tr></table>
+</div>
+<div id="comment_67028" class="cm">
+</div>
+<div id="post_rate_div_67028"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId67028" type="hidden" value="1643017034" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_67028" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport67028', 'misc.php?mod=report&rtype=post&rid=67028&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_67028_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=67028:2080" id="a_namepost_67028" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_67028')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div><div id="post_74083"><table id="pid74083" summary="pid74083" cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls" rowspan="2">
+ <div class="pi">
+<div class="authi"><a href="space-uid-10612.html" target="_blank" class="xw1">我爱神话</a>
+
+</div>
+</div>
+<div class="p_pop blk bui" id="userinfo74083" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo74083_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="space-uid-10612.html" target="_blank" class="xi2">我爱神话</a></strong>
+<em>当前离线</em>
+</div>
+<dl class="cl"><dt>注册时间</dt><dd>2010-10-13</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>37 小时</dd><dt>阅读权限</dt><dd>70</dd><dt>积分</dt><dd>2455</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=10612&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">132</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=10612&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">9</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>10612</dd></dl>
+<div class="imicn">
+<a href="http://wpa.qq.com/msgrd?V=1&amp;Uin=78077128&amp;Site=LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!&amp;Menu=yes" target="_blank" title="QQ"><img src="static/image/common/qq.gif" alt="QQ" /></a><a href="home.php?mod=space&amp;uid=10612&amp;do=profile" target="_blank" title="查看详细资料"><img src="static/image/common/userinfo.gif" alt="查看详细资料" /></a>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" title="未绑定新浪微博" /><a href="home.php?mod=magic&amp;mid=showip&amp;idtype=user&amp;id=%E6%88%91%E7%88%B1%E7%A5%9E%E8%AF%9D" id="a_showip_li_74083" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/showip.small.gif" alt="" /> IP卡</a>
+<a href="home.php?mod=magic&amp;mid=checkonline&amp;idtype=user&amp;id=%E6%88%91%E7%88%B1%E7%A5%9E%E8%AF%9D" id="a_repent_74083" class="xi2" onclick="showWindow(this.id, this.href)"><img src="static//image/magic/checkonline.small.gif" alt="" /> 狗仔卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar" onmouseover="showauthor(this, 'userinfo74083')"><a href="space-uid-10612.html" target="_blank"><img src="http://uc.linuxtone.org/data/avatar/000/01/06/12_avatar_middle.jpg" onerror="this.onerror=null;this.src='http://uc.linuxtone.org/images/noavatar_middle.gif'" /></a></div>
+<p><em><a href="home.php?mod=spacecp&amp;ac=usergroup&amp;gid=14" target="_blank">金牌会员</a></em></p>
+</div>
+<p id="g_up74083" onmouseover="showMenu({'ctrlid':this.id, 'pos':'12!'});"><img src="static/image/common/star_level3.gif" alt="Rank: 6" /><img src="static/image/common/star_level2.gif" alt="Rank: 6" /></p>
+<div id="g_up74083_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">金牌会员, 积分 2455, 距离下一级还需 545 积分</div>
+</div>
+<img src="http://bbs.linuxtone.org/xwb/images/bgimg/icon_off.gif" class="xwb-plugin-medal-sinawb"  title="未绑定新浪微博" /><dl class="pil cl"><dt>注册时间</dt><dd>2010-10-13</dd><dt>最后登录</dt><dd>2011-12-28</dd><dt>在线时间</dt><dd>37 小时</dd><dt>阅读权限</dt><dd>70</dd><dt>积分</dt><dd>2455</dd><dt>帖子</dt><dd><a href="home.php?mod=space&uid=10612&do=thread&type=reply&view=me&from=space" target="_blank" class="xi2">132</a></dd><dt>主题</dt><dd><a href="home.php?mod=space&uid=10612&do=thread&type=thread&view=me&from=space" target="_blank" class="xi2">9</a></dd><dt>精华</dt><dd>0</dd><dt>UID</dt><dd>10612</dd></dl><ul class="xl xl2 o cl">
+<li class="callon"><a href="space-uid-10612.html" target="_blank" title="串个门" class="xi2">串个门</a></li>
+<li class="buddy"><a href="home.php?mod=spacecp&amp;ac=friend&amp;op=add&amp;uid=10612&amp;handlekey=addfriendhk_10612" id="a_friend_li_74083" onclick="showWindow(this.id, this.href, 'get', 1, {'ctrlid':this.id,'pos':'00'});" title="加好友" class="xi2">加好友</a></li>
+<li class="poke2"><a href="home.php?mod=spacecp&amp;ac=poke&amp;op=send&amp;uid=10612" id="a_poke_li_74083" onclick="showWindow(this.id, this.href, 'get', 0);" title="打招呼" class="xi2">打招呼</a></li>
+<li class="pm2"><a href="home.php?mod=spacecp&amp;ac=pm&amp;op=showmsg&amp;handlekey=showmsg_10612&amp;touid=10612&amp;pmid=0&amp;daterange=2&amp;pid=74083&amp;tid=2080" onclick="showWindow('sendpm', this.href);" title="发消息" class="xi2">发消息</a></li>
+</ul>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="forum.php?mod=redirect&goto=findpost&ptid=2080&pid=74083" title="您的朋友访问此链接后，您将获得相应的积分奖励" id="postnum74083" onclick="setCopy(this.href, '帖子地址复制成功');return false;"><em>15</em><sup>#</sup></a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon74083" src="static/image/common/online_member.gif" />
+<em id="authorposton74083">发表于 2011-11-26 13:51:31</em>
+<span class="pipe">|</span><a href="forum.php?mod=viewthread&amp;tid=2080&amp;page=1&amp;authorid=10612" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tr><td class="t_f" id="postmessage_74083">
+监控LINUX的工具很多,其本都一样,,谢谢分享</td></tr></table>
+</div>
+<div id="comment_74083" class="cm">
+</div>
+<div id="post_rate_div_74083"></div>
+</div></div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr>
+<td class="pls"></td>
+<td class="plc">
+<div class="po">
+<div class="pob cl">
+<em>
+<input id="UserSinaId74083" type="hidden" value="0" /></em>
+
+<p>
+<a href="javascript:;" id="mgc_post_74083" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow('miscreport74083', 'misc.php?mod=report&rtype=post&rid=74083&tid=2080&fid=31', 'get', -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_74083_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="home.php?mod=magic&amp;mid=namepost&amp;idtype=pid&amp;id=74083:2080" id="a_namepost_74083" onclick="showWindow(this.id, this.href)"><img src="static/image/magic/namepost.small.gif" />显身卡</a><li>
+</ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_74083')</script>
+</div>
+</div>
+
+</td>
+</tr>
+<tr class="ad">
+<td class="pls"></td>
+<td class="plc">
+</td>
+</tr>
+</table>
+</div>
+<div id="postlistreply" class="pl"><div id="post_new" class="viewthread_table" style="display: none"></div></div>
+</div>
+
+
+<form method="post" autocomplete="off" name="modactions" id="modactions">
+<input type="hidden" name="formhash" value="3ec73b3a" />
+<input type="hidden" name="optgroup" />
+<input type="hidden" name="operation" />
+<input type="hidden" name="listextra" value="page%3D1" />
+<input type="hidden" name="page" value="1" />
+</form>
+
+
+<div class="pgs mtm mbm cl">
+<div class="pg"><strong>1</strong><a href="thread-2080-2-1.html">2</a><a href="thread-2080-2-1.html" class="nxt">下一页</a></div><span class="pgb y"><a href="forum.php?mod=forumdisplay&fid=31&page=1">返回列表</a></span>
+<a id="newspecialtmp" onmouseover="$('newspecial').id = 'newspecialtmp';this.id = 'newspecial';showMenu({'ctrlid':this.id})" onclick="showWindow('newthread', 'forum.php?mod=post&action=newthread&fid=31')" href="javascript:;" title ="发新帖"><img src="static/image/common/pn_post.png" alt="发新帖" /></a>
+</div>
+
+<!--[diy=diyfastposttop]--><div id="diyfastposttop" class="area"></div><!--[/diy]-->
+<script type="text/javascript">
+var postminchars = parseInt('10');
+var postmaxchars = parseInt('1000000');
+var disablepostctrl = parseInt('0');
+</script>
+
+<div id="f_pst" class="pl bm bmw">
+<form method="post" autocomplete="off" id="fastpostform" action="forum.php?mod=post&amp;action=reply&amp;fid=31&amp;tid=2080&amp;extra=page%3D1&amp;replysubmit=yes&amp;infloat=yes&amp;handlekey=fastpost" onSubmit="return fastpostvalidate(this)">
+<table cellspacing="0" cellpadding="0">
+<tr>
+<td class="pls">
+</td>
+<td class="plc">
+
+<span id="fastpostreturn"></span>
+
+
+<div class="cl">
+<div id="fastsmiliesdiv" class="y"><div id="fastsmiliesdiv_data"><div id="fastsmilies"></div></div></div><div class="hasfsl" id="fastposteditor">
+<div class="tedt mtn">
+<div class="bar">
+<span class="y">
+<a href="forum.php?mod=post&amp;action=reply&amp;fid=31&amp;tid=2080" onclick="return switchAdvanceMode(this.href)">高级模式</a>
+</span><script src="static/js/seditor.js?q44" type="text/javascript"></script>
+<div class="fpd">
+<a href="javascript:;" title="文字加粗" class="fbld">B</a>
+<a href="javascript:;" title="设置文字颜色" class="fclr" id="fastpostforecolor">Color</a>
+<a id="fastpostimg" href="javascript:;" title="图片" class="fmg">Image</a>
+<a id="fastposturl" href="javascript:;" title="添加链接" class="flnk">Link</a>
+<a id="fastpostquote" href="javascript:;" title="引用" class="fqt">Quote</a>
+<a id="fastpostcode" href="javascript:;" title="代码" class="fcd">Code</a>
+<a href="javascript:;" class="fsml" id="fastpostsml">Smilies</a>
+</div></div>
+<div class="area">
+<div class="pt hm">您需要登录后才可以回帖 <a href="member.php?mod=logging&amp;action=login" onclick="showWindow('login', this.href)" class="xi2">登录</a> | <a href="member.php?mod=register" class="xi2">注册</a> 
+<a href="http://bbs.linuxtone.org/connect.php?mod=login&op=init&referer=forum.php%3Fmod%3Dviewthread%26tid%3D2080%26extra%3Dpage%253D1%26page%3D1&statfrom=login" target="_top" rel="nofollow"><img src="static/image/common/qq_login.gif" class="vm" /></a>
+<a href="xwb.php?m=xwbAuth.login" rel="nofollow" alt="&#19968;&#27493;&#25630;&#23450;"><img src="xwb/images/bgimg/sina_login_btn.png" onerror="this.onerror=null;this.src='static/image/common/none.gif'" class="vm" /></a></div>
+</div>
+</div>
+</div>
+</div>
+
+<input type="hidden" name="formhash" value="3ec73b3a" />
+<input type="hidden" name="subject" value="" />
+<p class="ptm pnpost">
+<button type="button" onclick="showWindow('login', 'member.php?mod=logging&action=login&guestmessage=yes')" name="replysubmit" id="fastpostsubmit" class="pn pnc vm" value="replysubmit" tabindex="5"><strong>发表回复</strong></button>
+<label for="fastpostrefresh"><input id="fastpostrefresh" type="checkbox" class="pc" />回帖后跳转到最后一页</label>
+<script type="text/javascript">if(getcookie('fastpostrefresh') == 1) {$('fastpostrefresh').checked=true;}</script>
+</p>
+</td>
+</tr>
+</table>
+</form>
+</div>
+
+<script type="text/javascript">
+var connect_qzone_share_url = 'http://bbs.linuxtone.org/home.php?mod=spacecp&ac=plugin&id=qqconnect:spacecp&pluginop=share&sh_type=1&thread_id=2080';
+var connect_weibo_share_url = 'http://bbs.linuxtone.org/home.php?mod=spacecp&ac=plugin&id=qqconnect:spacecp&pluginop=share&sh_type=2&thread_id=2080';
+var connect_thread_info = {
+thread_url: 'http://bbs.linuxtone.org/thread-2080-1-1.html',
+thread_id: '2080',
+post_id: '4918',
+forum_id: '31',
+author_id: '1',
+author: 'NetSeek'
+};
+
+connect_autoshare = '0';
+connect_isbind = '';
+if(connect_autoshare == 1 && connect_isbind) {
+_attachEvent(window, 'load', function(){
+connect_share(connect_weibo_share_url, connect_openid);
+});
+}
+</script>
+
+
+<div id="md_1_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">
+<h4>LT总司令</h4>
+<p>Medal No.1</p>
+</div>
+</div>
+<div id="md_9_menu" class="tip tip_4" style="display: none;">
+<div class="tip_horn"></div>
+<div class="tip_c">
+<h4>LT同学</h4>
+<p>Medal No.9</p>
+</div>
+</div>
+<script type="text/javascript">document.onkeyup = function(e){keyPageScroll(e, 0, 1, 'forum.php?mod=viewthread&tid=2080', 1);}</script>
+</div>
+
+<div class="wp mtn">
+<!--[diy=diy3]--><div id="diy3" class="area"></div><!--[/diy]-->
+</div>
+
+<script src="http://search.discuz.qq.com/api/site/se?referer=http%3A%2F%2Fwww.google.com.hk%2Furl%3Fsa%3Dt%26rct%3Dj%26q%3Ddstat%26source%3Dweb%26cd%3D2%26ved%3D0CDEQFjAB%26url%3Dhttp%253A%252F%252Fbbs.linuxtone.org%252Fthread-2080-1-1.html%26ei%3D0t36Ts2-HPGuiQeV67GaAQ%26usg%3DAFQjCNEFmh_IhesDIqj0EDtkPlMXo60HbQ%26cad%3Drja&response_type=js&s_id=3180704&s_site_gid=7&s_site_uid=0&ts=1325063638&sig=c2154417fef9188a087a10823af18a68" type="text/javascript"></script>
+	</div>
+<div class="wp a_f"><script type="text/javascript" src=" http://taojintong.com/scripts/getads.js"></script>
+<script>
+show_ad('TD6Q7RhL');
+</script>
+<style type="text/css">
+<!--
+.STYLE1 {
+	color: #FF0000;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+
+<body>
+<p>IT运维专家网感谢<span class="STYLE1"><a href="http://bbs.linuxtone.org/ltimg/redun.jpg" target="_blank">红之盟网</a></span>络提供带宽支持</p>
+<p><strong>合作联系: QQ:67888954/MSN:cnseek@msn.com/mail:netseek@linuxtone.org </strong></p></div><div class="wp a_f"><script type="text/javascript"><!--
+google_ad_client = "pub-1468414772780004";
+/* 728x90, 创建于 10-4-24 */
+google_ad_slot = "7532284079";
+google_ad_width = 600;
+google_ad_height = 80;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div><script language="javascript">
+function xwb_loadScript(file, charset){
+	var script = document.createElement('SCRIPT');
+	script.type = 'text/javascript'; script.charset = charset; script.src = file;
+	document.getElementsByTagName('HEAD')[0].appendChild(script);
+}
+
+var _xwb_cfg_data ={
+	tipsType:	'',site_uid:	'0',sina_uid:	'',
+	siteVer:	'2',siteName:	'LinuxTone | 运维专家网论坛 - 最棒的Linux运维与开源架构技术交流社区!',pName:'forum_viewthread',
+	regUrl:		'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.reg',
+	setUrl:		'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.bind',
+	bindUrl:	'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.bind',
+	signerUrl:	'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.signer',
+	authUrl:	'http://bbs.linuxtone.org/xwb.php?m=xwbAuth.login',
+	getTipsUrl:	'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.getTips',
+	attentionUrl:	'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.attention',
+	wbxUrl:		'',
+    tipGetCountUrl: 'http://bbs.linuxtone.org/xwb.php?m=xwbSiteInterface.getTips',
+    loadingImgUrl : 'http://bbs.linuxtone.org/xwb/images/bgimg/xwb_loading.gif',
+	switchToStd: '0',
+	baseurlToStd: ''
+};
+
+xwb_loadScript("http://bbs.linuxtone.org/xwb/images/xwb.js", "UTF-8");
+</script>
+<link href="http://bbs.linuxtone.org/xwb/images/xwb_base.css" rel="stylesheet" type="text/css" />
+<link href="http://bbs.linuxtone.org/xwb/images/xwb_2.css" rel="stylesheet" type="text/css" />
+<script language="javascript">
+xwb_loadScript("http://bbs.linuxtone.org/xwb/images/xwb_tgc.js", "UTF-8");
+</script><div id="ft" class="wp cl">
+<div id="flk" class="y">
+<p><a href="archiver/" >Archiver</a><span class="pipe">|</span><a href="forum.php?mobile=yes" >手机版</a><span class="pipe">|</span><strong><a href="http://bbs.linuxtone.org/" target="_blank">感谢所有关心和支持过LinuxTone的朋友们    转载本站内容请注明原作者名及出处</a></strong>
+( <a href="http://www.miitbeian.gov.cn/" target="_blank">京ICP备08103151</a> )&nbsp;&nbsp;<span id="tcss"></span><script type="text/javascript" src="http://tcss.qq.com/ping.js?v=1q44" charset="utf-8"></script><script type="text/javascript" reload="1">pgvMain({"discuzParams":{"r2":"3180704","ui":0,"rt":"forum","md":"viewthread","fi":"31","ti":"2080","pn":1,"qq":"000","logo":11},"extraParams":""});</script> | <script src='http://s42.cnzz.com/stat.php?id=921282&web_id=921282&show=pic' language='JavaScript' charset='gb2312'></script>
+</p>
+<p class="xs0">
+GMT+8, 2011-12-28 17:13<span id="debuginfo">
+, Processed in 0.182566 second(s), 11 queries
+, Memcache On.
+</span>
+</p>
+</div>
+<div id="frt">
+<p>Powered by <strong><a href="http://www.discuz.net" target="_blank">Discuz!</a></strong> <em>X2</em></p>
+<p class="xs0">&copy; 2001-2011 <a href="http://www.comsenz.com" target="_blank">Comsenz Inc.</a></p>
+</div></script>
+</div>
+
+<div id="g_upmine_menu" class="tip tip_3" style="display:none;">
+<div class="tip_c">
+积分 0, 距离下一级还需  积分
+</div>
+<div class="tip_horn"></div>
+</div>
+<script src="home.php?mod=misc&ac=sendmail&rand=1325063638" type="text/javascript"></script>
+<span id="scrolltop" onclick="window.scrollTo('0','0')">回顶部</span>
+<script type="text/javascript">_attachEvent(window, 'scroll', function(){showTopLink();});</script>
+</body>
+</html>

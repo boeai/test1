@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Login Status</title>
+<script src="%E4%B8%AD%E6%96%AD_files/base.js" type="text/javascript"></script><link href="%E4%B8%AD%E6%96%AD_files/xn_connect.css" type="text/css" rel="stylesheet"></head>
+<body>
+<input value="http://www.hudong.com/xiaonei/xd_receiver.html" id="channelUrl" type="hidden">
+<input value="http://www.hudong.com/wiki/%E4%B8%AD%E6%96%AD" id="referer" type="hidden">
+<script type="text/javascript">
+document.domain = "renren.com";
+</script>
+<script src="%E4%B8%AD%E6%96%AD_files/FeatureLoader.js" type="text/javascript"></script>
+<script type="text/javascript">
+XN_RequireFeatures(["Connect"], function() {
+XN.XdComm.Server.init("/static/xd_receiver.html");
+var loginStatus = new XNIntern.LoginStatus();
+loginStatus.init(/* channel        */ document.getElementById('channelUrl').value,
+/* session info   */ null,
+/* settings       */ {"feedStorySettings":null,"loginMethod":"popup"},
+/* connect state  */ 2,
+/* base_domain    */ "hudong.com",
+/* public_session_data  */ null,
+/* parent_window_url */ document.getElementById('referer').value);
+});
+</script>
+
+
+<div style="position: absolute; top: -10000px; left: -10000px; width: 0px; height: 0px;" id="XN_HiddenContainer"></div><iframe style="position: absolute; visibility: hidden; width: 1px; height: 1px;" src="login_status_data/xd_receiver.htm"></iframe></body></html>

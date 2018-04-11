@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>频繁分配释放内存导致的性能问题的分析 - sniperhuangwei的专栏 - 博客频道 - CSDN.NET</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="description" content="现象1 压力测试过程中，发现被测对象性能不够理想，具体表现为：&#160;进程的系统态CPU消耗20，用户态CPU消耗10，系统idle大约70&#160;2 用ps -o majflt,minflt -C program命令查看，发现majflt每秒增量为0，而minflt每秒增量大于10000。初步分析majflt代表major fault，中文名叫大错误，minflt代表minor fault，中文名叫小错误。" />
+<script src="http://static.blog.csdn.net/scripts/jquery.js" type="text/javascript"></script>
+<script src="http://static.blog.csdn.net/scripts/plugins.js" type="text/javascript"></script>
+<script src="http://static.blog.csdn.net/scripts/common.js" type="text/javascript"></script>
+<link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css" />
+<link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/sniperhuangwei/rss/list" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/SyntaxHighlighter/shCore.js"></script>
+</head>
+<body>
+<script src="http://csdnimg.cn/pubnav/js/pub_topnav_2011.js"type="text/javascript"></script>
+<div id="container">
+<div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h1>
+                <a href="/sniperhuangwei">sniperhuangwei的专栏</a></h1>
+            <h2></h2>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>
+            <!--<li id="btnHome"><a href="/sniperhuangwei"><span><img src="http://static.blog.csdn.net/images/ico_home.gif">我的首页</span></a></li>-->
+            <li id="btnContents"><a href="/sniperhuangwei?viewmode=contents"><span><img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+            <li id="btnView"><a href="/sniperhuangwei?viewmode=list"><span><img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+            <li id="btnRss"><a href="/sniperhuangwei/rss/list"><span><img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>
+</ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "sniperhuangwei";
+    var blog_address = "http://blog.csdn.net/sniperhuangwei";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = $.cookie("UserName");
+</script>
+        
+<div id="body">
+<div id="main">
+<div class="main">
+<div class="notice"> 
+<a href="http://blog.csdn.net/blogdevteam/article/details/7161925" target="_blank"><font color=red>2012年4月微软MVP申请开始！</font></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://ad.doubleclick.net/click;h=v2|3E84|0|0|%2a|b;247908458;0-0;0;73605427;31-1|1;44759227|44777015|1;;%3fhttp://www.ithaowai.com/cloud?utm_source=CSDN&utm_medium=CSDN_HomePage_news_picture_g01&utm_campaign=CN2011Q4BIZ_Xeon_IT_Center_Promotion" target="_blank"><font color=red>点击了解英特尔云计算 </font></a>
+</div><script type="text/javascript" src="http://static.blog.csdn.net/scripts/ad.js"></script>
+
+<div id="article_details" class="details">
+    <div class="article_title">
+    <span class="ico ico_type_Repost"></span>
+    <h3>
+        <span class="link_title"><a href="/sniperhuangwei/article/details/5422016" title="频繁分配释放内存导致的性能问题的分析">频繁分配释放内存导致的性能问题的分析</a></span>
+        
+    </h3>
+</div>
+
+        
+    <div class="article_manage">
+        <span class="link_categories">
+        分类：
+            <a href="/sniperhuangwei/article/category/614240">程序设计</a> 
+        </span>
+    <span class="link_postdate">2010-03-27 10:58</span>
+    <span class="link_view" title="阅读次数">211人阅读</span>
+    <span class="link_comments" title="评论次数"><a href="#comments">评论</a>(0)</span>
+    <span class="link_collect"><a href="javascript:void(0);" onclick="javascript:collectArticle('频繁分配释放内存导致的性能问题的分析','5422016');return false;" title="收藏">收藏</a></span>
+    <span class="link_report"><a href="#report"  onclick="javascript:report(5422016,2);return false;" title="举报">举报</a></span>
+    
+</div>
+
+    
+<div id="article_content" class="article_content">
+    <p><strong>现象</strong><br />1 压力测试过程中，发现被测对象性能不够理想，具体表现为：&nbsp;<br />进程的系统态CPU消耗20，用户态CPU消耗10，系统idle大约70&nbsp;<br />2 用ps -o majflt,minflt -C program命令查看，发现majflt每秒增量为0，而minflt每秒增量大于10000。<br /><br /><strong>初步分析</strong><br />majflt代表major fault，中文名叫大错误，minflt代表minor fault，中文名叫小错误。<br />这两个数值表示一个进程自启动以来所发生的缺页中断的次数。<br />当一个进程发生缺页中断的时候，进程会陷入内核态，执行以下操作：&nbsp;<br />检查要访问的虚拟地址是否合法&nbsp;<br />查找/分配一个物理页&nbsp;<br />填充物理页内容（读取磁盘，或者直接置0，或者啥也不干）&nbsp;<br />建立映射关系（虚拟地址到物理地址）&nbsp;<br />重新执行发生缺页中断的那条指令&nbsp;<br />如果第3步，需要读取磁盘，那么这次缺页中断就是majflt，否则就是minflt。&nbsp;<br />此进程minflt如此之高，一秒10000多次，不得不怀疑它跟进程内核态cpu消耗大有很大关系。<br /><br /><strong>分析代码</strong><br />查看代码，发现是这么写的：一个请求来，用malloc分配2M内存，请求结束后free这块内存。看日志，发现分配内存语句耗时10us，平均一条请求处理耗时1000us 。 原因已找到！&nbsp;<br />虽然分配内存语句的耗时在一条处理请求中耗时比重不大，但是这条语句严重影响了性能。要解释清楚原因，需要先了解一下内存分配的原理。&nbsp;<br /><br /><strong>内存分配的原理</strong><br />从操作系统角度来看，进程分配内存有两种方式，分别由两个系统调用完成：brk和mmap（不考虑共享内存）。brk是将数据段(.data)的最高地址指针_edata往高地址推，mmap是在进程的虚拟地址空间中（一般是堆和栈中间）找一块空闲的。这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系。&nbsp;<br />在标准C库中，提供了malloc/free函数分配释放内存，这两个函数底层是由brk，mmap，munmap这些系统调用实现的。&nbsp;<br />下面以一个例子来说明内存分配的原理：<br /><img src="http://images.csdn.net/20100325/c-1.jpg" alt="" /><br />1进程启动的时候，其（虚拟）内存空间的初始布局如图1所示。其中，mmap内存映射文件是在堆和栈的中间（例如libc-2.2.93.so，其它数据文件等），为了简单起见，省略了内存映射文件。_edata指针（glibc里面定义）指向数据段的最高地址。&nbsp;<br />2进程调用A=malloc(30K)以后，内存空间如图2：malloc函数会调用brk系统调用，将_edata指针往高地址推30K，就完成虚拟内存分配。你可能会问：只要把_edata+30K就完成内存分配了？事实是这样的，_edata+30K只是完成虚拟地址的分配，A这块内存现在还是没有物理页与之对应的，等到进程第一次读写A这块内存的时候，发生缺页中断，这个时候，内核才分配A这块内存对应的物理页。也就是说，如果用malloc分配了A这块内容，然后从来不访问它，那么，A对应的物理页是不会被分配的。&nbsp;<br />3进程调用B=malloc(40K)以后，内存空间如图3.&nbsp;<br /><br /><img src="http://images.csdn.net/20100325/c-2.jpg" alt="" /><br />4进程调用C=malloc(200K)以后，内存空间如图4：默认情况下，malloc函数分配内存，如果请求内存大于128K（可由M_MMAP_THRESHOLD选项调节），那就不是去推_edata指针了，而是利用mmap系统调用，从堆和栈的中间分配一块虚拟内存。这样子做主要是因为brk分配的内存需要等到高地址内存释放以后才能释放（例如，在B释放之前，A是不可能释放的），而mmap分配的内存可以单独释放。当然，还有其它的好处，也有坏处，再具体下去，有兴趣的同学可以去看glibc里面malloc的代码了。&nbsp;<br />5进程调用D=malloc(100K)以后，内存空间如图5.&nbsp;<br />6进程调用free(C)以后，C对应的虚拟内存和物理内存一起释放&nbsp;<br /><img src="http://images.csdn.net/20100325/c-3.jpg" alt="" /><br /><br />7进程调用free(B)以后，如图7所示。B对应的虚拟内存和物理内存都没有释放，因为只有一个_edata指针，如果往回推，那么D这块内存怎么办呢？当然，B这块内存，是可以重用的，如果这个时候再来一个40K的请求，那么malloc很可能就把B这块内存返回回去了。&nbsp;<br />8进程调用free(D)以后，如图8所示。B和D连接起来，变成一块140K的空闲内存。&nbsp;<br />9默认情况下：当最高地址空间的空闲内存超过128K（可由M_TRIM_THRESHOLD选项调节）时，执行内存紧缩操作（trim）。在上一个步骤free的时候，发现最高地址空闲内存超过128K，于是内存紧缩，变成图9所示。<br /><br />真相大白<br />说完内存分配的原理，那么被测模块在内核态cpu消耗高的原因就很清楚了：每次请求来都malloc一块2M的内存，默认情况下，malloc调用mmap分配内存，请求结束的时候，调用munmap释放内存。假设每个请求需要6个物理页，那么每个请求就会产生6个缺页中断，在2000的压力下，每秒就产生了10000多次缺页中断，这些缺页中断不需要读取磁盘解决，所以叫做minflt；缺页中断在内核态执行，因此进程的内核态cpu消耗很大。缺页中断分散在整个请求的处理过程中，所以表现为分配语句耗时（10us）相对于整条请求的处理时间（1000us）比重很小。<br /><br />解决办法<br />将动态内存改为静态分配，或者启动的时候，用malloc为每个线程分配，然后保存在threaddata里面。但是，由于这个模块的特殊性，静态分配，或者启动时候分配都不可行。另外，Linux下默认栈的大小限制是10M，如果在栈上分配几M的内存，有风险。&nbsp;<br />禁止malloc调用mmap分配内存，禁止内存紧缩。<br />在进程启动时候，加入以下两行代码：<br />mallopt(M_MMAP_MAX, 0); // 禁止malloc调用mmap分配内存<br />mallopt(M_TRIM_THRESHOLD, -1); // 禁止内存紧缩<br />效果：加入这两行代码以后，用ps命令观察，压力稳定以后，majlt和minflt都为0。进程的系统态cpu从20降到10。<br /><br />小结<br />可以用命令ps -o majflt minflt -C program来查看进程的majflt, minflt的值，这两个值都是累加值，从进程启动开始累加。在对高性能要求的程序做压力测试的时候，我们可以多关注一下这两个值。&nbsp;<br />如果一个进程使用了mmap将很大的数据文件映射到进程的虚拟地址空间，我们需要重点关注majflt的值，因为相比minflt，majflt对于性能的损害是致命的，随机读一次磁盘的耗时数量级在几个毫秒，而minflt只有在大量的时候才会对性能产生影响。</p>
+</div>
+<div class="share_buttons" id="sharePanel"></div>
+
+<div class="article_next_prev">
+        <li class="prev_article">
+            <span>上一篇：</span><a href="http://blog.csdn.net/sniperhuangwei/article/details/5376568">erlang的echo server</a></li>
+        <li class="next_article">
+            <span>下一篇：</span><a href="http://blog.csdn.net/sniperhuangwei/article/details/5425471">用户态线程在AI中的应用</a></li>
+</div>
+
+
+</div>
+<div id="ad_cen"></div>
+<script type="text/javascript">
+    new Ad(4, 'ad_cen');
+</script>
+<div id="comment_title" class="panel_head">查看评论<a name="comments"></a></div>
+<div id="comment_list"></div>
+<div id="comment_bar"></div>
+<div id="comment_form"></div>
+<div class="announce">* 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+<script type="text/javascript">
+    var fileName = '5422016';
+    var commentscount = 0;
+    var islock = false
+</script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/comment.js"></script>
+<div id="ad_bot"></div>
+<script type="text/javascript">
+    new Ad(5, 'ad_bot');
+</script>
+<div id="report_dialog"></div>
+
+
+
+<div class="clear"></div>
+</div>
+</div>
+<div id="side">
+    <div class="side">
+<div id="panel_Profile" class="panel">
+    <ul class="panel_head"><span>个人资料</span></ul>
+    <ul class="panel_body profile">
+        <div id="blog_userface">
+            <a href="/sniperhuangwei" title="我的博客主页">
+            <img src="http://avatar.csdn.net/F/2/6/1_sniperhuangwei.jpg"  style="max-width:90%"/>
+            </a>
+            <br />
+            <span>sniperhuangwei</span>
+        </div>
+        <div id="blog_medal">
+        </div>
+        <ul id="blog_rank">
+            <li>访问：<span>16072次</span></li>
+            <li>积分：<span>633分</span></li>
+            <li>排名：<span>第10827名</span></li>
+        </ul>
+        <ul id="blog_statistics">
+            <li>原创：<span>46篇</span></li>
+            <li>转载：<span>2篇</span></li>
+            <li>译文：<span>0篇</span></li>
+            <li>评论：<span>18条</span></li>
+        </ul>
+    </ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="submit" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>文章分类</span></ul>
+    <ul class="panel_body">
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/578012">erlang</a><span>(5)</span>
+        
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/536340">lua</a><span>(11)</span>
+        
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/647373">其它</a><span>(2)</span>
+        
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/539708">游戏服务器</a><span>(16)</span>
+        
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/614240">程序设计</a><span>(6)</span>
+        
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/543570">算法与数据结构</a><span>(7)</span>
+        
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/sniperhuangwei/article/category/538641">设计模式</a><span>(1)</span>
+        
+        </li>
+    </ul>
+</div><div id="panel_Archive" class="panel">
+    <ul class="panel_head"><span>文章存档</span></ul>
+    <ul class="panel_body">
+        <div id="archive_list">
+        <!--归档统计-->
+        <li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2011/12">2011年12月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2011/11">2011年11月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2011/10">2011年10月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2011/03">2011年03月</a>(2)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2011/02">2011年02月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2010/11">2010年11月</a>(3)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2010/08">2010年08月</a>(2)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2010/07">2010年07月</a>(2)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2010/04">2010年04月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2010/03">2010年03月</a>(4)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2010/01">2010年01月</a>(9)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/12">2009年12月</a>(2)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/11">2009年11月</a>(5)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/10">2009年10月</a>(2)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/09">2009年09月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/08">2009年08月</a>(1)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/06">2009年06月</a>(3)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/05">2009年05月</a>(4)</li><li><a href="http://blog.csdn.net/sniperhuangwei/article/month/2009/04">2009年04月</a>(3)</li>
+        </div>
+    </ul>
+</div>
+<div id="hotarticls" class="panel">
+    <ul class="panel_head"><span>阅读排行</span></ul>
+    <ul class="panel_body">
+        <li>
+            <a href="/sniperhuangwei/article/details/5141449" title="体验luasocket">体验luasocket</a> (2153)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4096787" title="在lua中操作C++对象的字段">在lua中操作C++对象的字段</a> (1470)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5136367" title="为lua添加简单的网络功能">为lua添加简单的网络功能</a> (1019)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5262726" title="死锁检测">死锁检测</a> (809)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4907656" title="向lua注册C++类">向lua注册C++类</a> (771)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4663520" title="ucontext实现的用户级多线程框架">ucontext实现的用户级多线程框架</a> (592)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5249207" title="进程间传递文件描述符">进程间传递文件描述符</a> (533)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5087327" title="MMO服务器设计随想">MMO服务器设计随想</a> (482)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5149053" title="ucontext实现的用户级多线程框架2（抢先式多线程）">ucontext实现的用户级多线程框架2...</a> (475)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4897339" title="在C++中访问lua对象">在C++中访问lua对象</a> (395)
+        </li>
+    </ul>
+</div>
+<div id="hotarticls" class="panel">
+    <ul class="panel_head"><span>评论排行</span></ul>
+    <ul class="panel_body">
+        <li>
+            <a href="/sniperhuangwei/article/details/4168366" title="算24点">算24点</a> (4)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5472379" title="一种网游消息分发机制">一种网游消息分发机制</a> (2)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5347509" title="一道面试题">一道面试题</a> (2)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4897339" title="在C++中访问lua对象">在C++中访问lua对象</a> (2)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5149053" title="ucontext实现的用户级多线程框架2（抢先式多线程）">ucontext实现的用户级多线程框架2...</a> (2)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5805474" title="利用用户级线程提高多线程应用的性能">利用用户级线程提高多线程应用的性能</a> (2)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4096787" title="在lua中操作C++对象的字段">在lua中操作C++对象的字段</a> (1)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5136367" title="为lua添加简单的网络功能">为lua添加简单的网络功能</a> (1)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/5249482" title="当年的自荐信">当年的自荐信</a> (1)
+        </li>
+        <li>
+            <a href="/sniperhuangwei/article/details/4128646" title="c语言中的单态模式">c语言中的单态模式</a> (1)
+        </li>
+    </ul>
+</div>
+<div id="homepageArticles" class="panel">
+    <ul class="panel_head"><span>推荐文章</span></ul>
+    <ul class="panel_body" id="ad_commend">
+    </ul>
+</div>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/ad.js"></script>
+<script type="text/javascript">
+    new Ad(12, 'ad_commend');
+</script><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body">
+    <li>
+    <a href="/sniperhuangwei/article/details/4096787#comments">在lua中操作C++对象的字段</a>
+    <p style="margin:0px;">wlmmlw:
+不错，是一个过程。
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5805474#comments">利用用户级线程提高多线程应用的性能</a>
+    <p style="margin:0px;">heangel:
+对该文很感兴趣，但其中的minHeap.h和CThread.h及实现文件没有给出，能不能发一份给我：...
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5347509#comments">一道面试题</a>
+    <p style="margin:0px;">laocui172:
+唯一的两点是用了模版标识常量数组
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5347509#comments">一道面试题</a>
+    <p style="margin:0px;">laocui172:
+只能说是计算题吧
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/4897339#comments">在C++中访问lua对象</a>
+    <p style="margin:0px;">sniperhuangwei:
+往最近几篇lua的博客看吧
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/4897339#comments">在C++中访问lua对象</a>
+    <p style="margin:0px;">yeerh:
+有没有lua中访问C++ 对象的例子呢?
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5149053#comments">ucontext实现的用户级多线程框架2（抢先式多线程）</a>
+    <p style="margin:0px;">sniperhuangwei:
+仅仅一个实验，没实际用途
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5249482#comments">当年的自荐信</a>
+    <p style="margin:0px;">AssemblyCai:
+收藏了，快毕业了 .. 我能借用一下么？
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5149053#comments">ucontext实现的用户级多线程框架2（抢先式多线程）</a>
+    <p style="margin:0px;">AssemblyCai:
+非常不错，可惜的是，既然要 抢占式，就使用内核线程吧..... 用户线程的好处就是协作式调度。
+    </p>
+    </li>
+    <li>
+    <a href="/sniperhuangwei/article/details/5805474#comments">利用用户级线程提高多线程应用的性能</a>
+    <p style="margin:0px;">maosher:
+
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+</div>
+
+<div class="clear"></div>
+</div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".article_content pre").each(function () {
+                var $this = $(this);
+                if ($this.attr("class").indexOf("brush:") != -1) {
+                    var lang = $this.attr("class").split(';')[0].split(':')[1];
+                    $this.attr('name', 'code');
+                    $this.attr('class', lang);
+                }
+            });
+            dp.SyntaxHighlighter.HighlightAll('code');
+        });
+    </script>
+<script type="text/javascript" src="http://medal.blog.csdn.net/scripts/show.js"></script>
+<script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=155499"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script>
+<script type="text/javascript" src="http://www.csdn.net/ui/scripts/Csdn/counter.js"></script>
+<script type="text/javascript" src="http://csdnimg.cn/pubfooter/js/publib_footer.js"></script>
+
+</div>
+</body>
+</html>

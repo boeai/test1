@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,input,p,blockquote,th,td,form,p{margin:0;padding:0;}
+ol,ul,li,dd,dt,dl{ list-style:none;}
+em,th{font-style:normal;font-weight:normal;}
+img{border:0;}
+html{text-align:center;background:#fff; }
+body{margin:0 auto;text-align:center;font:12px/1.2 SimSun, Arial, Helvetica, sans-serif;position:relative;}
+</style>
+<script type="text/javascript">
+var HDAdvertisement={};
+HDAdvertisement.getParamvalue = function(name){ 
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+	var r = window.location.search.substr(1).match(reg); 
+	if (r != null) 
+	return unescape(r[2]); 
+	return null;  
+};
+HDAdvertisement.resize = function(){
+	
+	var defaultwidth = HDAdvertisement.getParamvalue("dwidth");
+    defaultwidth = defaultwidth == null?300:defaultwidth;
+	var defaultheight = HDAdvertisement.getParamvalue("dheight");
+    defaultheight = defaultheight == null?250:defaultheight;
+	var requestdomain = HDAdvertisement.getParamvalue("domain");
+	requestdomain = requestdomain == null?"www.hudong.com":requestdomain;
+	var iframeid = HDAdvertisement.getParamvalue("iframeid");
+	iframeid = iframeid == null?"adiframeid":iframeid;
+	var width = document.body.offsetWidth;   
+	var height = document.body.offsetHeight;
+	if(width == defaultwidth && height == defaultheight){
+		return;
+	}else if(width == 0 || height == 0){
+		var adholderid = HDAdvertisement.getParamvalue("adholderid");
+		if(adholderid==null||adholderid==""){
+			adholderid = iframeid;
+		}
+		if(adholderid!=null&&adholderid!=""){
+			try{
+				var  adholderObj = parent.document.getElementById(adholderid);
+				if(adholderObj!=null){
+					adholderObj.parentNode.removeChild(adholderObj);
+				}
+			}catch(e){
+				document.domain="hudong.com";
+				var  adholderObj = parent.document.getElementById(adholderid);
+				if(adholderObj!=null){
+					adholderObj.parentNode.removeChild(adholderObj);
+				}
+			}
+		}
+	}else{
+		var proxyiframe = document.createElement('iframe');
+		proxyiframe.setAttribute("height", "0");
+		proxyiframe.setAttribute("width", "0");
+		proxyiframe.setAttribute("style", "display:none;");
+		document.body.appendChild(proxyiframe);
+		proxyiframe.src = "http://"+requestdomain+"/iframeheightforad.html?rnd="+Math.random()+"#"+width+"|"+height+"|"+iframeid;
+	}
+};
+</script>
+<script src="fetchad_data/osd.js" type="text/javascript"></script></head>
+<body onload="HDAdvertisement.resize()">
+<div style="display:none;">
+<!-- google_ad_section_start -->
+中断
+<!-- google_ad_section_end -->
+</div>
+
+<script language="JavaScript"> 
+<!--
+function google_ad_request_done(google_ads) {
+	var s = '';
+	var i;
+ 
+
+	if (google_ads.length == 0) {
+		 return;
+	}
+ 
+	if (google_ads[0].type == "html") {
+	   s += google_ads[0].snippet;
+	}else {
+		   if (google_ads.length >= 1) {
+ 
+                            s+='<table width=300 style="border:#DBEEF7 solid 1px">';
+			   
+			   for(i = 0; i < google_ads.length; ++i) {
+					  s += '<tr><td style="padding-left:4px; text-align:left; padding-right:3px;"><a target="_blank" style="text-decoration:none" href="' + 
+					  google_ads[i].url + '" onmouseout="window.status=\'\'" onmouseover="window.status=\'go to ' +
+					  google_ads[i].visible_url + '\';return true"> <span style="text-decoration:underline;line-height:22px;font-size:14px;color:#000000;font-weight:bold">' + 
+					  google_ads[i].line1+'</span></a><br>';
+ 
+					  s +='<span style="color:#000000;line-height:22px;font-size:12px;text-decoration:none">' +	
+					  google_ads[i].line2 + '&nbsp;' + google_ads[i].line3 +'</span><br>';
+					  
+					  s +='  <span><a target="_blank" style="color:#0268CD;line-height:22px;font-size:12px;text-decoration:none" href="' + 	
+					  google_ads[i].url + '" onmouseout="window.status=\'\'" onmouseover="window.status=\'go to ' +	
+					  google_ads[i].visible_url + '\';return true">' + 	
+					  google_ads[i].visible_url + '</a></span><br></td></tr>';
+			   }
+ 
+			   s += '<tr><td><span><a target="_blank" href=\"' + google_info.feedback_url + '\" style="padding-left:200px;color:#B0B0B0;font-size:12px;text-decoration:none;">Ads by Google</a></span></td></tr></table>';
+			}
+	}
+	document.write(s);
+	return;
+}
+google_ad_client = "pub-1281461823660189";
+google_ad_slot = "3253271052";
+google_ad_output = 'js';
+google_max_num_ads = '3';
+google_ad_type = 'text';
+google_image_size = '300x280';
+google_feedback = 'on';
+// -->
+</script> 
+<script type="text/javascript" src="fetchad_data/show_ads.js"></script><script src="fetchad_data/show_ads_impl.js"></script><script>google_protectAndRun("ads_core.google_render_ad", google_handleError, google_render_ad);</script><script language="JavaScript1.1" src="fetchad_data/ads"></script><table style="border: 1px solid rgb(219, 238, 247);" width="300"><tbody><tr><td style="padding-left: 4px; text-align: left; padding-right: 3px;"><a target="_blank" style="text-decoration: none;" href="http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BGL_mwk5MT4yFC42knQSAwdXHDfLnqaQC5tq43w-SxILmGZDAWBABGAEgotPYFSgDOABQsJ217AdgnbnQgZAFoAGOhoP6A7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRIACAakCRqhIcpJPhT7IAqqXziKoAwHoAwXoA68C6APhAegDJPUDAAAABIgGAQ&amp;num=1&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_26m5iFBU8Fj5KNjZxgwGqg2ikRmA&amp;client=ca-pub-1281461823660189&amp;adurl=http://www.mexontec.com/product.asp%3Fsort_id%3D10%26hw_id%3D176" onmouseout="window.status=''" onmouseover="window.status='go to www.mexontec.com';return true"> <span style="text-decoration:underline;line-height:22px;font-size:14px;color:#000000;font-weight:bold">全光口交换机,工业交换机</span></a><br><span style="color:#000000;line-height:22px;font-size:12px;text-decoration:none">16光口,24光口光纤交换机,48光口光纤&nbsp;以太网工业交换机,兆越通讯,67756421</span><br>  <span><a target="_blank" style="color: rgb(2, 104, 205); line-height: 22px; font-size: 12px; text-decoration: none;" href="http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BGL_mwk5MT4yFC42knQSAwdXHDfLnqaQC5tq43w-SxILmGZDAWBABGAEgotPYFSgDOABQsJ217AdgnbnQgZAFoAGOhoP6A7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRIACAakCRqhIcpJPhT7IAqqXziKoAwHoAwXoA68C6APhAegDJPUDAAAABIgGAQ&amp;num=1&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_26m5iFBU8Fj5KNjZxgwGqg2ikRmA&amp;client=ca-pub-1281461823660189&amp;adurl=http://www.mexontec.com/product.asp%3Fsort_id%3D10%26hw_id%3D176" onmouseout="window.status=''" onmouseover="window.status='go to www.mexontec.com';return true">www.mexontec.com</a></span><br></td></tr><tr><td style="padding-left: 4px; text-align: left; padding-right: 3px;"><a target="_blank" style="text-decoration: none;" href="http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BgTgiwk5MT4yFC42knQSAwdXHDceTy9ACh-eriyOv5vT9CJCSFBACGAIgotPYFSgDOABQ-5qEigVgnbnQgZAFoAH9gNb8A7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRMACBKgDAegDBegDrwLoA-EB6AMk9QMAAAAEiAYB&amp;num=2&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_2iCMD9uZUzn7rQyscfWY7UYxSRJw&amp;client=ca-pub-1281461823660189&amp;adurl=https://www.google.com/appserve/fb/forms/cnawcoupon30/%3Futm_source%3Dpt_Computer_category::Computers%2520%26%2520Electronics%3ESoftware" onmouseout="window.status=''" onmouseover="window.status='go to AdWords.google.com';return true"> <span style="text-decoration:underline;line-height:22px;font-size:14px;color:#000000;font-weight:bold">免费在谷歌展示您的广告</span></a><br><span style="color:#000000;line-height:22px;font-size:12px;text-decoration:none">更有机会获得高达1000元广告费赠送&nbsp;只需1分钟注册，马上获得优惠券！</span><br>  <span><a target="_blank" style="color: rgb(2, 104, 205); line-height: 22px; font-size: 12px; text-decoration: none;" href="http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BgTgiwk5MT4yFC42knQSAwdXHDceTy9ACh-eriyOv5vT9CJCSFBACGAIgotPYFSgDOABQ-5qEigVgnbnQgZAFoAH9gNb8A7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRMACBKgDAegDBegDrwLoA-EB6AMk9QMAAAAEiAYB&amp;num=2&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_2iCMD9uZUzn7rQyscfWY7UYxSRJw&amp;client=ca-pub-1281461823660189&amp;adurl=https://www.google.com/appserve/fb/forms/cnawcoupon30/%3Futm_source%3Dpt_Computer_category::Computers%2520%26%2520Electronics%3ESoftware" onmouseout="window.status=''" onmouseover="window.status='go to AdWords.google.com';return true">AdWords.google.com</a></span><br></td></tr><tr><td style="padding-left: 4px; text-align: left; padding-right: 3px;"><a target="_blank" style="text-decoration: none;" href="http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BZb2Vwk5MT4yFC42knQSAwdXHDdzI8IYC3PbFiyTEzrTuGcDubRADGAMgotPYFSgDOABQ4p2XlQVgnbnQgZAFoAH0oovkA7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRKkCRqhIcpJPhT7AAgTIApSIrxioAwHoAwXoA68C6APhAegDJPUDAAAABIgGAQ&amp;num=3&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_1ozYbtdUklFsQx9X3oZV9lGxJgIA&amp;client=ca-pub-1281461823660189&amp;adurl=http://quanguo.800pai.com/index.php%3Fcategory_id%3D0%26malltype_id%3D8" onmouseout="window.status=''" onmouseover="window.status='go to quanguo.800pai.com';return true"> <span style="text-decoration:underline;line-height:22px;font-size:14px;color:#000000;font-weight:bold">数码家电团购就上八佰拍</span></a><br><span style="color:#000000;line-height:22px;font-size:12px;text-decoration:none">每天多款数码家电团购信息,&nbsp;更多省钱,便捷,想不到的低价团购</span><br>  <span><a target="_blank" style="color: rgb(2, 104, 205); line-height: 22px; font-size: 12px; text-decoration: none;" href="http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=BZb2Vwk5MT4yFC42knQSAwdXHDdzI8IYC3PbFiyTEzrTuGcDubRADGAMgotPYFSgDOABQ4p2XlQVgnbnQgZAFoAH0oovkA7IBDnd3dy5odWRvbmcuY29tugEKMzAweDI4MF9qc8gBAdoBLWh0dHA6Ly93d3cuaHVkb25nLmNvbS93aWtpLyVFNCVCOCVBRCVFNiU5NiVBRKkCRqhIcpJPhT7AAgTIApSIrxioAwHoAwXoA68C6APhAegDJPUDAAAABIgGAQ&amp;num=3&amp;cid=5GiwoFt_3Rdo9e7vs7ut_A9I&amp;sig=AOD64_1ozYbtdUklFsQx9X3oZV9lGxJgIA&amp;client=ca-pub-1281461823660189&amp;adurl=http://quanguo.800pai.com/index.php%3Fcategory_id%3D0%26malltype_id%3D8" onmouseout="window.status=''" onmouseover="window.status='go to quanguo.800pai.com';return true">quanguo.800pai.com</a></span><br></td></tr><tr><td><span><a target="_blank" href="http://www.google.com/url?ct=abg&amp;q=https://www.google.com/adsense/support/bin/request.py%3Fcontact%3Dabg_afc%26url%3Dhttp://www.hudong.com/wiki/%2525E4%2525B8%2525AD%2525E6%252596%2525AD%26hl%3Dzh-CN%26client%3Dca-pub-1281461823660189%26adU%3Dwww.mexontec.com%26adT%3D%25E5%2585%25A8%25E5%2585%2589%25E5%258F%25A3%25E4%25BA%25A4%25E6%258D%25A2%25E6%259C%25BA,%25E5%25B7%25A5%25E4%25B8%259A%25E4%25BA%25A4%25E6%258D%25A2%25E6%259C%25BA%26adU%3DAdWords.google.com%26adT%3D%25E5%2585%258D%25E8%25B4%25B9%25E5%259C%25A8%25E8%25B0%25B7%25E6%25AD%258C%25E5%25B1%2595%25E7%25A4%25BA%25E6%2582%25A8%25E7%259A%2584%25E5%25B9%25BF%25E5%2591%258A%26adU%3Dquanguo.800pai.com%26adT%3D%25E6%2595%25B0%25E7%25A0%2581%25E5%25AE%25B6%25E7%2594%25B5%25E5%259B%25A2%25E8%25B4%25AD%25E5%25B0%25B1%25E4%25B8%258A%25E5%2585%25AB%25E4%25BD%25B0%25E6%258B%258D%26gl%3DCN&amp;usg=AFQjCNFXBTOjvNgvbfjtwpTXVyMzLKkPhA" style="padding-left: 200px; color: rgb(176, 176, 176); font-size: 12px; text-decoration: none;">Ads by Google</a></span></td></tr></tbody></table>
+
+
+<iframe src="fetchad_data/iframeheightforad.htm" style="display: none;" height="0" width="0"></iframe></body></html>

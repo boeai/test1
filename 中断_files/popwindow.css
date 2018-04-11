@@ -1,0 +1,103 @@
+/*---------弹窗 08-10-09 banma------*/
+html,body{_height:100%;}
+.docpagepopwindow .blue,a.blue{color:#002bb8;}
+.docpagepopwindow .a-c,#information_module .a-c{text-align:center; margin:0 auto;}
+.docpagepopwindow .inp-btn,.figure .inp-btn,#information_module .inp-btn,.editpop .inp-btn,#mapadmin .inp-btn{padding:0 10px;height:22px;line-height:22px;margin:0 -5px 0 15px;border:1px #545454 solid;border-width: 0 1px 1px 0;}
+.docpagepopwindow dl{ padding:0 25px;color:#323232;}
+.docpagepopwindow dt{padding-top:12px;}
+.docpagepopwindow dd{padding:8px 0 4px 0;}
+.docpagepopwindow .inp_txt,.table input{width:180px;height:14px;padding:3px 8px 3px 4px;border:1px #7f9db9 solid;}
+.docpagepopwindow .table input{background:#fff;}
+.docpagepopwindow .area{width:425px;height:120px;padding:5px 3px;border:1px #7f9db9 solid;}
+.docpagepopwindow dd.a-c{margin: 1px 0 20px 0;}
+.docpagepopwindow .inp-btn{padding:0 5px;margin:0 8px;}
+.docpagepopwindow .btn_black,.btn_black{background:#7e7e7e;color:white;border:1px #4a4a4a solid;border-color:#fff #fff #4a4a4a #4a4a4a;}
+.docpagepopwindow .add_fl,.publish_cg{padding:5px 0 20px 20px;line-height:18px;}
+.docpagepopwindow .add_fl{background:url(http://static.hudong.com/wiki/mima.gif) no-repeat left 5px;}
+/*用于多字数左对齐*/
+.docpagepopwindow .a-l .add_fl{padding-left:20px;background:url(http://static.hudong.com/wiki/mima.gif) no-repeat left 7px;}
+.docpagepopwindow .publish_cg{ background:url(http://static.hudong.com/wiki/dengpao.gif) no-repeat left top;}
+.docpagepopwindow .table{width:455px !important;margin:0 auto 10px auto;}
+.docpagepopwindow .table thead{font-weight:bold;color:#343434;}
+.docpagepopwindow .table td{height:30px;line-height:30px;padding:0 4px;}
+/*用于词条对战*/
+.buy,.challenge {padding:20px;}
+.buy .dt_span {background:url(http://static.hudong.com/wiki/mima.gif) no-repeat left 0; padding:2px 0 2px 20px;}
+.buy input,.challenge p input {background:#7E7E7E; border-color:#fff #fff #4a4a4a #4a4a4a; border-style:solid; border-width:1px; color:white; height:24px; margin:0 10px 0 0; padding:0 5px}
+.challenge_dl {border-bottom:1px dashed #ccc; padding:10px 0}
+.challenge_dl dd {padding-left:20px}
+.challenge dd span{padding-right:15px}
+/*消歧义*/
+.various_mobile{padding:20px;}
+.various_mobile .input{background:#7E7E7E; border-color:#fff #fff #4a4a4a #4a4a4a; border-style:solid; border-width:1px; color:white; height:24px; margin:0 10px 0 0; padding:0 5px}
+.various_mobile .hint {background:url(http://static.hudong.com/wiki/dengpao.gif) no-repeat 0 8px; padding-left:25px; line-height:18px}
+.various_mobile li {line-height:30px; display:block; overflow:hidden}
+/*------编辑器登录，注册弹窗 （维吧登录弹窗引用这个）-----*/
+.editor_login {margin:15px; width:328px;font-size:12px;}
+.editor_login ul{padding:10px}
+.editor_login li,.editor_register li{margin-left:70px;display:block; clear:both;padding:5px 0 10px; line-height:24px;}
+.editor_login li span,.editor_register li span{float:left;width:75px;text-align:right; margin-left:-80px; line-height:22px;}
+.editor_login li input{	margin-right:8px; vertical-align:middle;}
+.error{color:red;height:24px;}
+.edi_reg_now{float:left; width:308px; padding:15px 10px 0; margin:20px 0; border-width:1px 0 0 0; text-align:left;}
+.edi_reg_now input{ margin:25px auto 0 auto;}
+.editor_register{padding:20px;}
+.editor_register h3{height:24px;margin-bottom:12px;}
+.editor_register li input{	margin-right:8px; vertical-align:middle;}
+.editor_register b{margin-right:5px;  font-weight:normal;}
+.editor_register label.block{clear:left;color:#666;}
+.editor_register label.red{color:red;}
+.editor_register li.a-l{margin-top:12px;}
+/*img_yzm 验证码样式 整理样式，单拿*/
+input.wid50{float:left;width:36px;padding:2px 4px;}
+#float_window .img_yzm{float:left;width:61px;height:21px; vertical-align:middle;overflow:hidden; }
+#float_window .img_yzm img{width:100px;height:26px;}
+#float_window a .blur{height:22px;line-height:28px;}
+/*---ad--自然博物馆抽奖弹窗*/
+.submit_succeed{width:280px; padding:8px 20px; line-height:22px;color:#666; }
+.submit_succeed li{padding-bottom:8px;}
+/*------帮助中心 提问弹窗 banma 09-03-27-----*/
+#help_question{padding:8px 12px;line-height:20px;}
+/*------排行榜新建榜单 09-03-30-----*/
+#newopen {width:520px; padding:15px}
+#newopen li {margin-left:80px; padding:5px 0;clear:both;display:block;line-height:24px;}
+#newopen strong { margin-left:-80px; text-align:right; width:80px; float:left}
+#newopen input {margin-right:10px}
+#newopen label {margin-right:15px; white-space:inherit; *white-space:inherit}
+#newopen label input {margin-right:2px}
+#newopen textarea {border:1px solid #7F9DB9; padding:2px 4px;}
+/*------编小组弹窗-----*/
+#join_group{padding:20px 20px 10px 20px;line-height:24px;}
+#join_group .inp_btn{margin-top:15px;}
+/*------上传图片------*/
+.figure {width:340px; padding:15px;line-height:24px;}
+.figure .upload {*padding:2px 0;}
+.figure label {display:block; color:#999; margin-left:65px}
+.false{height:22px;line-height:22px;}
+/*------添加任务词条------*/
+.add-task_word{padding:12px 20px; line-height:22px;}
+.add-task_word .area{width:370px;height:76px;padding:4px 3px;border:1px #7f9db9 solid; line-height:20px;}
+/*--信息模块--*/
+#information_module,.editpop,#mapadmin{background:#fff;}
+#information_module div,#adminfigure div{height:350px; overflow-y:scroll; overflow-x:hidden; padding:20px 10px;}
+#information_module .tishi {border-bottom:1px solid #ccc; padding:15px; background:#FFFFCC;}
+#information_module .a-c,.editpop .a-c{padding:20px 0}
+#information_module table,#adminfigure table {border-collapse:collapse;border-spacing:0;empty-cells:show; margin:0 auto 20px;}
+#information_module table td,#adminfigure table td {padding:0 5px 10px 0;vertical-align: top; line-height:25px}
+#information_module table li {float:left; margin-right:15px}
+#information_module table .inp_txt{width:250px;}
+#information_module table .bor-white-t {padding-top:20px; border-top:1px solid #ccc}
+#information_module table p {color:#666}
+#information_module dl span {width:150px; display:block; float:left; padding-bottom:5px; height:20px; overflow:hidden}
+#information_module dl .inp_txt {width:120px}
+#information_module .select,#information_module .inp133 {width:133px !important;}
+#information_module select,#information_module .select,#information_module .inp133 {margin-right:2px}
+/*人物关系*/
+#adminfigure div {border-bottom:1px solid #ccc;}
+#adminfigure th {font-weight:bold; padding-bottom:10px}
+.gxms {width:190px}
+#adminfigure a {cursor:pointer;}
+/*地图管理*/
+#mapadmin{padding:10px; line-height:24px}
+#mapadmin p {padding-bottom:10px}
+#mapadmin li.a-c{width:360px; height:220px; overflow:hidden;}

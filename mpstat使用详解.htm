@@ -1,0 +1,503 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>mpstat使用详解 - LionBule - ITeye技术网站</title>
+    <meta name="description" content="    mpstat是MultiProcessor Statistics的缩写，是实时系统监控工具。其报告与CPU的一些统计信息，这些信息存放在/proc/stat文件中。在多CPUs系统里，其不但能查看所有CPU的平均状况信息，而且能够查看特定CPU的信息。下面只介绍mpstat与CPU相关的参数，mpstat的语法如下：  mpstat [-P {|ALL}] [internal [count] ..." />
+    <meta name="keywords" content=" mpstat使用详解" />
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+    <link rel="search" type="application/opensearchdescription+xml" href="/open_search.xml" title="ITeye" />
+    <link href="/rss" rel="alternate" title="LionBule" type="application/rss+xml" />
+    <link href="http://www.iteye.com/stylesheets/blog.css?1324881911" media="screen" rel="stylesheet" type="text/css" />
+<link href="http://www.iteye.com/stylesheets/themes/blog/blue.css?1308833137" media="screen" rel="stylesheet" type="text/css" />
+    <script src="http://www.iteye.com/javascripts/application.js?1324095302" type="text/javascript"></script>
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-535605-1']);
+  _gaq.push(['_setDomainName', 'iteye.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+      <link href="http://www.iteye.com/javascripts/syntaxhighlighter/SyntaxHighlighter.css?1308833137" media="screen" rel="stylesheet" type="text/css" />
+  <script src="http://www.iteye.com/javascripts/syntaxhighlighter/shCoreCommon.js?1308833137" type="text/javascript"></script>
+<script src="http://www.iteye.com/javascripts/hotkey.js?1308833137" type="text/javascript"></script>
+  <script src="http://www.iteye.com/javascripts/code_favorites.js?1308833137" type="text/javascript"></script>
+<script src="http://www.iteye.com/javascripts/weiboshare.js?1311688568" type="text/javascript"></script>
+  <style>
+    div#main {background-color: transparent; border: 0; padding: 0px; width: 740px;}
+  </style>
+  </head>
+  <body>
+    <div id="header">
+      <div id="blog_site_nav">
+  <a href="http://www.iteye.com/" class="homepage">首页</a>
+  <a href="http://www.iteye.com/news">资讯</a>
+  <a href="http://www.iteye.com/magazines">精华</a>
+  <a href="http://www.iteye.com/forums">论坛</a>
+  <a href="http://www.iteye.com/ask">问答</a>
+  <a href="http://www.iteye.com/blogs">博客</a>
+  <a href="http://www.iteye.com/groups">群组</a>
+  <a href="#" onclick="return false;" id="msna"><u>更多</u> <small>▼</small></a>
+  <div class="quick_menu" style="display:none;">
+    <a href="http://www.iteye.com/job">招聘</a>
+    <a href="http://www.iteye.com/search">搜索</a>
+  </div>
+</div>
+      <div id="user_nav">
+      <a href="/login" class="welcome" title="登录">您还未登录 !</a>
+    <a href="/login">登录</a>
+    <a href="/signup" class="nobg">注册</a>
+  </div>
+
+    </div>
+
+    <div id="page">
+      <div id="branding" class="clearfix">
+        <div id="blog_name"><h1><a href="/">LionBule</a></h1></div>
+        <div id="blog_preview">
+          
+        </div>
+        <div id="blog_domain">永久域名 <a href="/">http://lionbule.iteye.com</a></div>
+      </div>
+      
+      <div id="content" class="clearfix">
+        <div id="main">
+          
+
+
+          
+
+
+<div class="blog_main">
+  <div class="blog_nav">
+    
+    <div class="pre_next">
+      <a href="/blog/1258450" class="next" title="Solution to Eclipse Warning with SVN">Solution to Eclipse Warning with SVN</a>
+      |
+      <a href="/blog/1202261" class="pre" title="天语W700 wipe">天语W700 wipe</a>
+    </div>
+  </div>
+  <div class="blog_title">
+    <div class="date"><span class='year'>2011</span><span class='sep_year'>-</span><span class='month'>10</span><span class='sep_month'>-</span><span class='day'>28</span></div>
+    <h3>
+      <a href="/blog/1220539">mpstat使用详解</a>
+      <em class="actions">      </em>
+    </h3>
+    <ul class='blog_categories'><strong>博客分类：</strong> <li><a href="/category/99296">操作系统</a></li> </ul>
+        <div class='news_tag'></div>
+  </div>
+
+  <div id="blog_content" class="blog_content">
+    <p><span style="background-color: #fffbd9;">
+</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">mpstat是MultiProcessor Statistics的缩写，是实时系统监控工具。其报告与CPU的一些统计信息，这些信息存放在/proc/stat文件中。在多CPUs系统里，其不但能查看所有CPU的平均状况信息，而且能够查看特定CPU的信息。下面只介绍mpstat与CPU相关的参数，mpstat的语法如下：</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">mpstat [-P {|ALL}] [internal [count]]</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">参数的含义如下：</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">参数 解释</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">-P {|ALL} 表示监控哪个CPU， cpu在[0,cpu个数-1]中取值</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">internal 相邻的两次采样的间隔时间</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">count 采样的次数，count只能和delay一起使用</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">当没有参数时，mpstat则显示系统启动以后所有信息的平均值。有interval时，第一行的信息自系统启动以来的平均信息。</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">从第二行开始，输出为前一个interval时间段的平均信息。与CPU有关的输出的含义如下：</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">参数 解释 从/proc/stat获得数据</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">CPU 处理器ID</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">user 在internal时间段里，用户态的CPU时间（%），不包含 nice值为负 进程 (usr/total)*100  </span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">nice 在internal时间段里，nice值为负进程的CPU时间（%）   (nice/total)*100  </span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">system 在internal时间段里，核心时间（%）   (system/total)*100</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">iowait 在internal时间段里，硬盘IO等待时间（%） (iowait/total)*100</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">irq 在internal时间段里，硬中断时间（%）      (irq/total)*100</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">soft 在internal时间段里，软中断时间（%）    (softirq/total)*100</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">idle 在internal时间段里，CPU除去等待磁盘IO操作外的因为任何原因而空闲的时间闲置时间（%）(idle/total)*100</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">intr/s 在internal时间段里，每秒CPU接收的中断的次数intr/total)*100</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">CPU总的工作时间=total_cur=user+system+nice+idle+iowait+irq+softirq</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">total_pre=pre_user+ pre_system+ pre_nice+ pre_idle+ pre_iowait+ pre_irq+ pre_softirq</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">user=user_cur – user_pre</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">total=total_cur-total_pre</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">其中_cur 表示当前值，_pre表示interval时间前的值。上表中的所有值可取到两位小数点。</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><strong style="font-weight: bold;">范例1：</strong>average mode (粗略信息)</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">当mpstat不带参数时，输出为从系统启动以来的平均值。</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">CODE:</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[work@builder linux-2.6.14]$ mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.9-5.31AXsmp (builder.redflag-linux.com) 12/16/2005</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:38:46 AM CPU %user %nice %system %iowait %irq %soft %idle intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:38:48 AM all 23.28 0.00 1.75     0.50 0.00 0.00 74.47 1018.59<br></span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><br><strong style="font-weight: bold;">范例2:</strong> 每2秒产生了2个处理器的统计数据报告</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">下面的命令可以每2秒产生了2个处理器的统计数据报告，一共产生三个interval 的信息，然后再给出这三个interval的平</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">均信息。默认时，输出是按照CPU 号排序。第一个行给出了从系统引导以来的所有活跃数据。接下来每行对应一个处理器的</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">活跃状态。。</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">CODE:</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server yum_dir]# mpstat -P ALL 2 3</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:20 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:22 PM all    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00   1001.49</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:22 PM    0    0.00    0.00    0.50    0.00    0.00    0.00    0.00   99.50   1001.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:22 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00      0.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:22 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:24 PM all    0.00    0.00    0.25    0.00    0.00    0.00    0.00   99.75   1005.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:24 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00   1005.50</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:24 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00      0.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><br><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:24 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:26 PM all    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00   1001.49</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:26 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00   1001.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">09:34:26 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00      0.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><br><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Average:     CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Average:     all    0.00    0.00    0.08    0.00    0.00    0.00    0.00   99.92   1002.66</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Average:       0    0.00    0.00    0.17    0.00    0.00    0.00    0.00   99.83   1002.49</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00 100.00      0.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server yum_dir]#</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><strong style="font-weight: bold;">范例3：</strong>比较带参数和不带参数的mpstat的结果。</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">在后台开一个2G的文件</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;"># cat 1.img &amp;</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">然后在另一个终端运行mpstat命令</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">CODE:</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# cat 1.img &amp;</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[1] 6934</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:31 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:31 PM all    0.07    0.02    0.25    0.21    0.01    0.04    0.00   99.40   1004.57</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:35 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:35 PM all    0.07    0.02    0.25    0.21    0.01    0.04    0.00   99.39   1004.73</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:39 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:39 PM all    0.07    0.02    0.25    0.21    0.01    0.04    0.00   99.38   1004.96</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:44 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:44 PM all    0.07    0.02    0.26    0.21    0.01    0.05    0.00   99.37   1005.20</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat 3 10</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:55 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:58 PM all   13.12    0.00   20.93    0.00    1.83    9.80    0.00   54.32   2488.08</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:01 PM all   10.82    0.00   19.30    0.83    1.83    9.32    0.00   57.90   2449.83</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:04 PM all   10.95    0.00   20.40    0.17    1.99    8.62    0.00   57.88   2384.05</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:07 PM all   10.47    0.00   18.11    0.00    1.50    8.47    0.00   61.46   2416.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:10 PM all   11.81    0.00   22.63    0.00    1.83   11.98    0.00   51.75   2210.60</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:13 PM all    6.31    0.00   10.80    0.00    1.00    5.32    0.00   76.58   1795.33</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:19 PM all    1.75    0.00    3.16    0.75    0.25    1.25    0.00   92.85   1245.18</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:22 PM all   11.94    0.00   19.07    0.00    1.99    8.29    0.00   58.71   2630.46</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:25 PM all   11.65    0.00   19.30    0.50    2.00    9.15    0.00   57.40   2673.91</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:28 PM all   11.44    0.00   21.06    0.33    1.99   10.61    0.00   54.56   2369.87</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Average:     all    9.27    0.00   16.18    0.30    1.50    7.64    0.00   65.11   2173.54</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]#</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">上两表显示出当要正确反映系统的情况，需要正确使用命令的参数。vmstat 和iostat 也需要注意这一问题。</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"># cat 1.img &amp;</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">然后在另一个终端运行mpstat命令</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">CODE:</p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# cat 1.img &amp;</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[1] 6934</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:31 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:31 PM all    0.07    0.02    0.25    0.21    0.01    0.04    0.00   99.40   1004.57</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:35 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:35 PM all    0.07    0.02    0.25    0.21    0.01    0.04    0.00   99.39   1004.73</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:39 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:39 PM all    0.07    0.02    0.25    0.21    0.01    0.04    0.00   99.38   1004.96</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:44 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:44 PM all    0.07    0.02    0.26    0.21    0.01    0.05    0.00   99.37   1005.20</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]# mpstat 3 10</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Linux 2.6.18-164.el5 (server.sys.com)    01/04/2010</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"> </p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:55 PM CPU   %user   %nice    %sys %iowait    %irq   %soft %steal   %idle    intr/s</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:17:58 PM all   13.12    0.00   20.93    0.00    1.83    9.80    0.00   54.32   2488.08</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:01 PM all   10.82    0.00   19.30    0.83    1.83    9.32    0.00   57.90   2449.83</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:04 PM all   10.95    0.00   20.40    0.17    1.99    8.62    0.00   57.88   2384.05</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:07 PM all   10.47    0.00   18.11    0.00    1.50    8.47    0.00   61.46   2416.00</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:10 PM all   11.81    0.00   22.63    0.00    1.83   11.98    0.00   51.75   2210.60</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:13 PM all    6.31    0.00   10.80    0.00    1.00    5.32    0.00   76.58   1795.33</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:19 PM all    1.75    0.00    3.16    0.75    0.25    1.25    0.00   92.85   1245.18</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:22 PM all   11.94    0.00   19.07    0.00    1.99    8.29    0.00   58.71   2630.46</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:25 PM all   11.65    0.00   19.30    0.50    2.00    9.15    0.00   57.40   2673.91</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">10:18:28 PM all   11.44    0.00   21.06    0.33    1.99   10.61    0.00   54.56   2369.87</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">Average:     all    9.27    0.00   16.18    0.30    1.50    7.64    0.00   65.11   2173.54</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;"><span style="line-height: 19px; color: #0000ff; font-size: x-small;">[root@server ~]#</span></p>
+<p style="color: #323e32; font-family: simsun; font-size: 14px; margin-bottom: 5px; line-height: 21px; padding: 0px;">上两表显示出当要正确反映系统的情况，需要正确使用命令的参数。vmstat 和iostat 也需要注意这一问题。</p>
+<p> </p>
+  </div>
+
+  
+
+
+  
+  
+  <div id="bottoms" class="clearfix">
+    
+    <div id="share_weibo">分享到：
+      <a data-type='sina' href="javascript:;" title="分享到新浪微博"><img src="/images/t_sina.gif"></a>
+      <a data-type='qq' href="javascript:;" title="分享到腾讯微博"><img src="/images/t_qq.gif"></a>
+    </div>
+  </div>
+
+  <div class="blog_nav">
+    <div class="pre_next">
+      <a href="/blog/1258450" class="next" title="Solution to Eclipse Warning with SVN">Solution to Eclipse Warning with SVN</a>
+      |
+      <a href="/blog/1202261" class="pre" title="天语W700 wipe">天语W700 wipe</a>
+    </div>
+  </div>
+  <div class="blog_bottom">
+    <ul>
+      <li>11:25</li>
+      <li><a href="#comments">评论</a> / 浏览 (0 / 44)</li>
+      
+      
+      <li>分类:<a href="http://www.iteye.com/blogs/category/os">操作系统</a></li>      
+    </ul>
+  </div>
+
+  <div class="blog_comment">
+    <h5>评论</h5>
+    <a id="comments" name="comments"></a>
+    
+    
+    
+  </div>
+
+  <div class="blog_comment">
+    <h5>发表评论</h5>
+            <p style="text-align:center; margin-top:30px;margin-bottom:0px;"><a href="/login" style="background-color:white;"> <img src="/images/login_icon.png" style="vertical-align:middle; margin-right: 10px;" /></a><a href="/login">  您还没有登录,请您登录后再发表评论 </a></p>
+      </div>
+</div>
+
+
+<script type="text/javascript">
+  dp.SyntaxHighlighter.HighlightAll('code', true, true);
+
+  $$('#main .blog_content pre[name=code]').each(function(pre, index){ // blog content
+    var post_id = 1220539;
+    var location = window.location;
+    source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+    pre.writeAttribute('codeable_id', post_id);
+    pre.writeAttribute('codeable_type', "Blog");
+    pre.writeAttribute('source_url', source_url);
+    pre.writeAttribute('pre_index', index);
+    pre.writeAttribute('title', 'mpstat使用详解');
+  });
+  $$('#main .blog_comment > div').each(function(comment){// comment
+    var post_id = comment.id.substr(2);
+    $$("#"+comment.id+" pre[name=code]").each(function(pre, index){
+      var location = window.location;
+      source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+      source_url += "#" + comment.id;
+      pre.writeAttribute('codeable_id', post_id);
+      pre.writeAttribute('codeable_type', "Post");
+      pre.writeAttribute('source_url', source_url);
+      pre.writeAttribute('pre_index', index);
+      pre.writeAttribute('title', 'mpstat使用详解');
+    });
+  });
+  code_favorites_init();
+
+  fix_image_size($$('div.blog_content img'), 700);
+  function quote_comment(id) {
+    new Ajax.Request('/editor/quote', {
+      parameters: {'id':id, 'type':'BlogComment'},
+      onSuccess:function(response){editor.bbcode_editor.textarea.insertAfterSelection(response.responseText);
+        Element.scrollTo(editor.bbcode_editor.textarea.element);}
+    });
+  }
+
+  new WeiboShare({share_buttons: $('share_weibo'), img_scope: $('blog_content')});
+</script>
+
+
+
+
+        </div>
+
+        <div id="local">
+          <div class="local_top"></div>
+          <div id="blog_owner">
+            <div id="blog_owner_logo"><a href='http://lionbule.iteye.com'><img alt="lionbule的博客" class="logo" src="http://www.iteye.com/upload/logo/user/551794/d26e2002-c5b6-36be-8f77-7ac8c2dabf12.jpg?1315488094" title="lionbule的博客: LionBule" /></a></div>
+            <div id="blog_owner_name">lionbule</div>
+          </div>
+          <div id="blog_actions">
+            <ul>
+              <li>浏览: 45422 次</li>
+              <li>性别: <img alt="Icon_minigender_1" src="http://www.iteye.com/images/icon_minigender_1.gif?1308833136" title="男" /></li>
+              <li>来自: 杭州</li>
+              <li><img src='/images/status/offline.gif'/></li>
+              <li>
+                <a href="/blog/profile" class="profile">详细资料</a>
+                <a href="/blog/guest_book" class="guest_book">留言簿</a>
+              </li>
+              
+            </ul>
+            <h5>搜索本博客</h5>
+            <form action="/blog/search" method="get">              <input class="text" id="query" name="query" style="margin-left: 10px;width: 110px;" type="text" />
+              <input class="submit" type="submit" value="搜索" />
+            </form>          </div>
+          <div id="user_visits" class="clearfix">
+            <h5>最近访客 <span style='font-weight:normal;font-size:12px;padding-left:30px;'><a href="/blog/user_visits">&gt;&gt;更多访客</a></span></h5>
+            
+              <div class="user_visit">
+                <div class="logo"><a href='http://hellohank.iteye.com' target='_blank'><img alt="hellohank的博客" class="logo" src="http://www.iteye.com/images/user-logo-thumb.gif?1308833137" title="hellohank的博客: 苦海无边，回头是一种境界" /></a></div>
+                <div class="left"><a href='http://hellohank.iteye.com' target='_blank'>hellohank</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href='http://wohanyuliang.iteye.com' target='_blank'><img alt="wohanyuliang的博客" class="logo" src="http://www.iteye.com/upload/logo/user/609916/d4d773cf-03f9-3246-83fc-74d0de8ce655-thumb.jpg?1324539195" title="wohanyuliang的博客: " /></a></div>
+                <div class="left"><a href='http://wohanyuliang.iteye.com' target='_blank'>wohanyuliang</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href='http://zaohua.iteye.com' target='_blank'><img alt="zaohua的博客" class="logo" src="http://www.iteye.com/images/user-logo-thumb.gif?1308833137" title="zaohua的博客: " /></a></div>
+                <div class="left"><a href='http://zaohua.iteye.com' target='_blank'>zaohua</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href='http://akanairen.iteye.com' target='_blank'><img alt="akanairen的博客" class="logo" src="http://www.iteye.com/upload/logo/user/340029/a87028a4-d125-3717-84c1-2c80b6fd59fb-thumb.jpg?1288404622" title="akanairen的博客: " /></a></div>
+                <div class="left"><a href='http://akanairen.iteye.com' target='_blank'>akanairen</a></div>
+              </div>
+            
+          </div>
+                      <div id="blog_menu">
+              <h5>博客分类</h5>
+              <ul>
+                <li><a href="/">全部博客 (159)</a></li>
+                
+                  <li><a href="/category/99294">Java编程 (52)</a></li>
+                
+                  <li><a href="/category/144350">设计模式 (1)</a></li>
+                
+                  <li><a href="/category/144351">数据挖掘 (1)</a></li>
+                
+                  <li><a href="/category/125931">web前端 (4)</a></li>
+                
+                  <li><a href="/category/125947">数据库 (15)</a></li>
+                
+                  <li><a href="/category/99297">配置管理 (17)</a></li>
+                
+                  <li><a href="/category/99296">操作系统 (34)</a></li>
+                
+                  <li><a href="/category/85584">私人收藏 (19)</a></li>
+                
+                  <li><a href="/category/134212">转载文章 (4)</a></li>
+                
+                  <li><a href="/category/145128">其它 (1)</a></li>
+                
+                  <li><a href="/category/166834">网络通信 (2)</a></li>
+                
+                  <li><a href="/category/174791">OSGI (1)</a></li>
+                
+              </ul>
+            </div>
+            
+              
+              <div id="blog_album">
+                <h5>我的相册</h5>
+                <div class="picture_thumb" style="float: none">
+                  <div><span class='thumb_box'><a href='/album'><img src='http://dl.iteye.com/upload/picture/pic/104940/3d57efea-5638-3706-aad2-01dc44ae2126-thumb.jpg' /></a></span></div>
+                  <span>Collectors<br/> <a href="/album">共 42 张</a></span>
+                </div>
+              </div>
+            
+            <div id="guest_books">
+              <h5>我的留言簿 <span style='font-weight:normal;font-size:12px;padding-left:20px;'><a href="/blog/guest_book">&gt;&gt;更多留言</a></span></h5>
+              <ul>
+                
+              </ul>
+            </div>
+            <div id="blog_others">
+              <h5>其他分类</h5>
+              <ul>
+                <li><a href="/blog/favorite">我的收藏</a> (0)</li>
+                <li><a href="/blog/code_favorite">我的代码</a> (0)</li>
+                                                <li><a href="/blog/topic">我的论坛主题帖</a> (0)</li>
+                <li><a href="/blog/post">我的所有论坛帖</a> (0)</li>
+                <li><a href="/blog/article">我的精华良好帖</a> (0)</li>
+                              </ul>
+            </div>
+            <div id="recent_groups">
+              <h5>最近加入群组</h5>
+              <ul>
+                
+                  <li><a href="http://drools.group.iteye.com">Drools</a></li>
+                
+                  <li><a href="http://hllvm.group.iteye.com">高级语言虚拟机</a></li>
+                
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>存档</h5>
+              <ul>
+                
+                  <li><a href="/blog/monthblog/2011-12">2011-12</a> (4)</li>
+                
+                  <li><a href="/blog/monthblog/2011-11">2011-11</a> (4)</li>
+                
+                  <li><a href="/blog/monthblog/2011-10">2011-10</a> (3)</li>
+                
+                <li><a href="/blog/monthblog_more">更多存档...</a></li>
+              </ul>
+            </div>
+            
+            
+              <div id="comments_top">
+                <h5>评论排行榜</h5>
+                <ul>
+                  
+                    <li><a href="/blog/936600" title="int和byte互转 long和byte互转">int和byte互转 long和byte互转</a></li>
+                  
+                    <li><a href="/blog/1161868" title="JAVA 排序算法">JAVA 排序算法</a></li>
+                  
+                </ul>
+              </div>
+            
+            <div id="rss">
+              <ul>
+                <li><a href="/rss" target="_blank"><img alt="Rss" src="http://www.iteye.com/images/rss.png?1308833136" /></a></li>
+                <li><a href="http://fusion.google.com/add?feedurl=http://lionbule.iteye.com/rss" target="_blank"><img alt="Rss_google" src="http://www.iteye.com/images/rss_google.gif?1308833136" /></a></li>
+              </ul>
+            </div>
+            <div class="local_bottom"></div>
+          
+        </div>
+      </div>
+
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          <hr/>
+          声明：ITeye文章版权属于作者，受法律保护。没有作者书面许可不得转载。若作者同意转载，必须以超链接形式标明文章原始出处和作者。<br />
+          &copy; 2003-2011 ITeye.com.   All rights reserved.  [ 京ICP证110151号  京公网安备110105010620 ]
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+  document.write("<img src='http://stat.iteye.com/?url="+ encodeURIComponent(document.location.href) + "&referrer=" + encodeURIComponent(document.referrer) + "&user_id=' width='0' height='0' />");
+</script>
+
+    
+  </body>
+</html>
